@@ -84,19 +84,19 @@ arabidopsis_supermodel.constrain_photons(150, printouts=True);
 # %% ../src/2.1_solvingmodel.ipynb 28
 arabidopsis_supermodel.add_maintenance();
 
-# %% ../src/2.1_solvingmodel.ipynb 32
+# %% ../src/2.1_solvingmodel.ipynb 33
 with arabidopsis_supermodel.fba_model as m:
 
     m.reactions.Photon_tx_gc_2.upper_bound = 0
     m.reactions.Photon_tx_me_2.upper_bound = 0
 
     blue_unconstrained_wt, blue_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 33
-blue_unconstrained_wt_solution.to_csv(output_dir + "blue_unconstrained_wt.csv")
+        m, rxn_list=fva_list[:5], processes=no_processes)
 
 # %% ../src/2.1_solvingmodel.ipynb 35
+blue_unconstrained_wt_solution.to_csv(output_dir + f"blue_unconstrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 37
 with arabidopsis_supermodel.fba_model as m:
 
     m.reactions.Photon_tx_gc_2.upper_bound = 0
@@ -106,10 +106,10 @@ with arabidopsis_supermodel.fba_model as m:
     blue_unconstrained_starchko, blue_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 36
+# %% ../src/2.1_solvingmodel.ipynb 38
 blue_unconstrained_starchko_solution.to_csv(output_dir + "blue_unconstrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 39
+# %% ../src/2.1_solvingmodel.ipynb 41
 with arabidopsis_supermodel.fba_model as m:
 
     m.reactions.Photon_tx_gc_2.upper_bound = 0
@@ -121,10 +121,10 @@ with arabidopsis_supermodel.fba_model as m:
     blue_constrained_wt, blue_constrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 40
+# %% ../src/2.1_solvingmodel.ipynb 42
 blue_constrained_wt_solution.to_csv(output_dir + "blue_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 42
+# %% ../src/2.1_solvingmodel.ipynb 44
 with arabidopsis_supermodel.fba_model as m:
 
     m.reactions.Photon_tx_gc_2.upper_bound = 0
@@ -138,19 +138,19 @@ with arabidopsis_supermodel.fba_model as m:
     blue_constrained_starchko, blue_constrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 43
+# %% ../src/2.1_solvingmodel.ipynb 45
 blue_constrained_starchko_solution.to_csv(output_dir + "blue_constrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 47
+# %% ../src/2.1_solvingmodel.ipynb 49
 with arabidopsis_supermodel.fba_model as m:
 
     white_unconstrained_wt, white_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 48
+# %% ../src/2.1_solvingmodel.ipynb 50
 white_unconstrained_wt_solution.to_csv(output_dir + "white_unconstrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 50
+# %% ../src/2.1_solvingmodel.ipynb 52
 with arabidopsis_supermodel.fba_model as m:
 
     mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
@@ -158,10 +158,10 @@ with arabidopsis_supermodel.fba_model as m:
     white_unconstrained_starchko, white_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 51
+# %% ../src/2.1_solvingmodel.ipynb 53
 white_unconstrained_starchko_solution.to_csv(output_dir + "white_unconstrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 54
+# %% ../src/2.1_solvingmodel.ipynb 56
 with arabidopsis_supermodel.fba_model as m:
 
     gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
@@ -170,10 +170,10 @@ with arabidopsis_supermodel.fba_model as m:
     white_constrained_wt, white_constrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 55
+# %% ../src/2.1_solvingmodel.ipynb 57
 white_constrained_wt_solution.to_csv(output_dir + "white_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 57
+# %% ../src/2.1_solvingmodel.ipynb 59
 with arabidopsis_supermodel.fba_model as m:
 
     gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
@@ -184,10 +184,10 @@ with arabidopsis_supermodel.fba_model as m:
     white_constrained_starchko, white_constrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 58
+# %% ../src/2.1_solvingmodel.ipynb 60
 white_constrained_starchko_solution.to_csv(output_dir + "white_constrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 62
+# %% ../src/2.1_solvingmodel.ipynb 64
 with arabidopsis_supermodel.fba_model as m:
 
     for p in [1, 2, 3, 4]:
@@ -195,11 +195,11 @@ with arabidopsis_supermodel.fba_model as m:
 
     nops_unconstrained_wt, nops_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 63
-nops_unconstrained_wt_solution.to_csv(output_dir + "nops_unconstrained_wt.csv")
 
 # %% ../src/2.1_solvingmodel.ipynb 65
+nops_unconstrained_wt_solution.to_csv(output_dir + "nops_unconstrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 67
 with arabidopsis_supermodel.fba_model as m:
 
     for p in [1, 2, 3, 4]:
@@ -210,10 +210,10 @@ with arabidopsis_supermodel.fba_model as m:
     nops_unconstrained_starchko, nops_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 66
+# %% ../src/2.1_solvingmodel.ipynb 68
 nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_unconstrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 69
+# %% ../src/2.1_solvingmodel.ipynb 71
 with arabidopsis_supermodel.fba_model as m:
 
     for p in [1, 2, 3, 4]:
@@ -225,10 +225,10 @@ with arabidopsis_supermodel.fba_model as m:
     nops_unconstrained_wt, nops_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 70
+# %% ../src/2.1_solvingmodel.ipynb 72
 nops_unconstrained_wt_solution.to_csv(output_dir + "nops_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 72
+# %% ../src/2.1_solvingmodel.ipynb 74
 with arabidopsis_supermodel.fba_model as m:
 
     for p in [1, 2, 3, 4]:
@@ -242,5 +242,5 @@ with arabidopsis_supermodel.fba_model as m:
     nops_unconstrained_starchko, nops_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
         m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 73
+# %% ../src/2.1_solvingmodel.ipynb 75
 nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_constrained_starchko.csv")
