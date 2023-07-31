@@ -1,0 +1,3 @@
+No objective coefficients in model. Unclear what should be optimized
+=>> PBS: job killed: walltime 28813 exceeded limit 28800
+-bash: line 1: 1141628 Killed                  /var/spool/PBS/mom_priv/jobs/8023198.pbs.SC
