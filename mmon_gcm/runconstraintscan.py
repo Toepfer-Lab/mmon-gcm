@@ -29,14 +29,19 @@ model = cobra.io.load_json_model(model_path)
 # %% ../src/3.2_run_constraint_scan.ipynb 12
 pandarallel.initialize(nb_workers=no_cores, progress_bar=False)
 scan_solution = constraints.parallel_apply(
-    mmon_gcm.constraintscan.solve_model_for_constraint_scan, args=([model, light_colour]), axis=1)
+    mmon_gcm.constraintscan.solve_model_for_constraint_scan,
+    args=([model, light_colour]),
+    axis=1,
+)
 
 # %% ../src/3.2_run_constraint_scan.ipynb 13
 solution_df = pd.DataFrame()
 for i, solution in scan_solution.items():
     # this is to catch infeasible solutions
     try:
-        solution_df = solution_df.append(solution.to_frame().loc[:, "fluxes"], ignore_index=True)
+        solution_df = solution_df.append(
+            solution.to_frame().loc[:, "fluxes"], ignore_index=True
+        )
     except:
         solution_df = solution_df.append(pd.Series(dtype=float), ignore_index=True)
 

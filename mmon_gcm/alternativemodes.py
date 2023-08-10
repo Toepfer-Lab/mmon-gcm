@@ -8,33 +8,38 @@ from .solving import pfba_Weighted
 
 # %% ../src/functions/alternativemodes.ipynb 3
 def get_real_reaction_ids(model):
-    '''
+    """
     This function takes a COBRApy model object and returns a list of
     reaction ids without phase tags that are considered to be 'real',
     excluding reactions that combine others, constraint pseudoreactions,
     boundary reactions.
-    '''
+    """
     reactions_to_weight = []
     for reaction in model.reactions:
-        if not (
-            "constraint" in reaction.id
-            or "overall" in reaction.id
-            or "sum" in reaction.id
-            or reaction.id[:2] == "EX"
-        ) and reaction.id[-1:] == "1":  # take reaction id without phase information
+        if (
+            not (
+                "constraint" in reaction.id
+                or "overall" in reaction.id
+                or "sum" in reaction.id
+                or reaction.id[:2] == "EX"
+            )
+            and reaction.id[-1:] == "1"
+        ):  # take reaction id without phase information
             reactions_to_weight.append(reaction.id[:-2])
     return reactions_to_weight
 
 # %% ../src/functions/alternativemodes.ipynb 4
 def solve_model_with_weightings(weightings, model, temp_results_path):
-
     print(f"Solving solution {weightings.name}")
 
     weightings_dict = dict(weightings)
-    model, solution = pfba_Weighted(model, weightings=weightings_dict, objective="Phloem_tx_overall")
+    model, solution = pfba_Weighted(
+        model, weightings=weightings_dict, objective="Phloem_tx_overall"
+    )
 
     if temp_results_path != None:
-        temp_solution_path = temp_results_path+str(weightings.name) + ".csv"
+        temp_solution_path = temp_results_path / (str(weightings.name) + ".csv")
+        print(temp_solution_path)
         solution.fluxes.to_csv(temp_solution_path)
 
     return solution.fluxes
