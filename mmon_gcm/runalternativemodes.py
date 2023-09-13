@@ -58,7 +58,7 @@ else:
 model = cobra.io.load_json_model(model_path)
 print("Model imported")
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 10
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 11
 print(model.solver.configuration.tolerances.integrality)
 print(model.solver.configuration.tolerances.feasibility)
 model.solver.configuration.tolerances.feasibility = (
@@ -66,10 +66,10 @@ model.solver.configuration.tolerances.feasibility = (
 )
 print(model.solver.configuration.tolerances.feasibility)
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 11
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 12
 parameters_df = pd.read_csv(parameters_csv, index_col=0)
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 13
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 14
 arabidopsis_supermodel = mmon_gcm.supermodel.SuperModel(
     parameters_df.loc[:, "Value"], fba_model=model
 )
@@ -77,7 +77,7 @@ arabidopsis_supermodel.constrain_osmolarity(printouts=False)
 arabidopsis_supermodel.constrain_photons(150, printouts=False)
 arabidopsis_supermodel.add_maintenance();
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 15
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 16
 if light_colour == "blue":
     arabidopsis_supermodel.fba_model.reactions.Photon_tx_gc_2.upper_bound = 0
     arabidopsis_supermodel.fba_model.reactions.Photon_tx_me_2.upper_bound = 0
@@ -109,14 +109,14 @@ else:
 
 print("Supermodel established and model constrained")
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 16
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 17
 weightings = pd.read_csv(weightings_csv, index_col=[0], header=[0])
 print("Weightings file imported")
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 20
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 21
 temp_results = Path(results_path).parent / "_tmp/"
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 21
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 22
 def get_file_names_as_integers(directory_path):
     try:
         # Get a list of all files and directories in the specified directory
@@ -134,7 +134,7 @@ def get_file_names_as_integers(directory_path):
         print(f"An error occurred: {e}")
         return []
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 22
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 23
 if os.path.isdir(temp_results):
     print(f"Already a tmp directory at {temp_results}, checking for existing solutions")
     existing_solutions = get_file_names_as_integers(temp_results)
@@ -150,7 +150,7 @@ else:
     )
     Path(temp_results).mkdir(parents=True, exist_ok=True)
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 23
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 24
 pandarallel.initialize(nb_workers=no_cores, progress_bar=False)
 print(f"Solving model for {len(weightings.index)} alternative weightings")
 weightings_solution = weightings.parallel_apply(
@@ -159,7 +159,7 @@ weightings_solution = weightings.parallel_apply(
     axis=1,
 )
 
-# %% ../src/4.2_run_alternative_flux_modes.ipynb 24
+# %% ../src/4.2_run_alternative_flux_modes.ipynb 25
 weightings_solution.to_csv(results_path)
 if len(weightings_solution) == len(weightings):
     print(f"All solutions saved to {results_path}")

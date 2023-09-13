@@ -35,22 +35,18 @@ class SuperModel:
     def get_volumes(self, apertures="default", printouts=False, per_guard_cell=True):
         """Returns a list containing the volume of the guard cells, in dm$^3$, at each phase, calculated using the OnGuard equation"""
 
-        self.apertures = (
-            self.__getattribute__("apertures") if apertures == "default" else apertures
-        )
+        self.apertures = self.__getattribute__("apertures") if apertures == "default" else apertures
 
         # get the volume of an individual guard cell using the relationship between aperture and volume from OnGuard
         volumes_individual = [aperture * self.r + self.s for aperture in self.apertures]
 
         # multiply volume of an individual guard cell by the number of guard cells in 1m2 of leaf
-        volumes_total = [
-            volume_individual * self.N_gcs for volume_individual in volumes_individual
-        ]
+        volumes_total = [volume_individual * self.N_gcs for volume_individual in volumes_individual]
 
         if per_guard_cell == True:
             if printouts == True:
                 for phase, volume in enumerate(volumes_individual):
-                    volume_per_cell = volume * 10 ** 12
+                    volume_per_cell = volume * 10**12
                     print(f"Volume in phase {phase} is {volume_per_cell}pL")
 
             return volumes_individual  # dm3
@@ -62,15 +58,11 @@ class SuperModel:
 
             return np.array(volumes_total)  # dm3
 
-    def get_osmolarities(
-        self, apertures="default", equation="onguard", printouts=False
-    ):
+    def get_osmolarities(self, apertures="default", equation="onguard", printouts=False):
         """Calculates the osmolarities at each phase of the model using the equation
         specified, default is onguard. Adds these as an attribute to the SuperModel"""
 
-        self.apertures = (
-            self.__getattribute__("apertures") if apertures == "default" else apertures
-        )
+        self.apertures = self.__getattribute__("apertures") if apertures == "default" else apertures
 
         q = self.n - self.m * self.s / self.r  # atm
         p = self.m / self.r  # atm/dm3
@@ -82,25 +74,22 @@ class SuperModel:
                         ((2.0 * (aperture * self.r + self.s) * p) / (self.R * self.T))
                         + self.C_apo
                         + (q / (self.R * self.T))
-                    ) **
-                    2.0
+                    )
+                    ** 2.0
                     - (self.C_apo + (q / (self.R * self.T))) ** 2.0
-                ) / ((4.0 * p) / (self.R * self.T))
+                )
+                / ((4.0 * p) / (self.R * self.T))
                 for aperture in self.apertures
             ]
-            osmolarities = [osmolarity * self.N_gcs * 10 ** 3 for osmolarity in osmolarities] # make total os and convert to mM
+            osmolarities = [
+                osmolarity * self.N_gcs * 10**3 for osmolarity in osmolarities
+            ]  # make total os and convert to mM
 
         elif equation == "macrobbie":
             osmolarities = [
                 (
-                    (
-                        (
-                            (2.5 * math.exp(0.16 * aperture))
-                            * ((aperture * self.r + self.s) * self.N_gcs)
-                        ) /
-                        (0.082 * 293)
-                    ) *
-                    10 ** 3
+                    (((2.5 * math.exp(0.16 * aperture)) * ((aperture * self.r + self.s) * self.N_gcs)) / (0.082 * 293))
+                    * 10**3
                 )
                 for aperture in self.apertures
             ]
@@ -113,9 +102,7 @@ class SuperModel:
 
         if printouts == True:
             print(f"Raw osmolarities: {osmolarities}")
-            osmolarites_mM = np.array(osmolarities) / np.array(
-                self.get_volumes(self.apertures, per_guard_cell=False)
-            )
+            osmolarites_mM = np.array(osmolarities) / np.array(self.get_volumes(self.apertures, per_guard_cell=False))
             print(f"Osmolarities in mM: {osmolarites_mM}")
             osmolarity_change = osmolarites_mM[1] - osmolarites_mM[0]
             print(f"Change in osmolarity: {osmolarity_change}mM")
@@ -131,26 +118,21 @@ class SuperModel:
         """This method constrains the fba_model of the supermodel using
         osmolarities calculated using `SuperModel.get_osmolarities`"""
 
-        self.apertures = (
-            self.__getattribute__("apertures") if apertures == "default" else apertures
-        )
+        self.apertures = self.__getattribute__("apertures") if apertures == "default" else apertures
 
-        osmolarities = self.get_osmolarities(
-            self.apertures, equation=osequation, printouts=printouts
-        )
+        osmolarities = self.get_osmolarities(self.apertures, equation=osequation, printouts=printouts)
 
         compartments_volumes_dict = {"c": 1 - self.Vac_frac, "v": self.Vac_frac}
 
         for compartment, fraction in compartments_volumes_dict.items():
-
             compartment_osmolarity = np.array(osmolarities) * fraction
 
             constraints = [
                 self.fba_model.problem.Constraint(
                     self.fba_model.reactions.get_by_id(
                         f"pseudoOs_constraint_{compartment}_gc_" + str(phase + 1)
-                    ).flux_expression -
-                    osmolarity,
+                    ).flux_expression
+                    - osmolarity,
                     lb=0,
                     ub=0,
                 )
@@ -169,7 +151,7 @@ class SuperModel:
         """This method returns the proportion of the volume of the leaf that is guard cells"""
 
         V_l = self.T_l * self.A_l  # volume of leaf is area x thickness
-        V_l = V_l * 10 ** 3  # (Total leaf volume) m3 -> dm3 = 10**3
+        V_l = V_l * 10**3  # (Total leaf volume) m3 -> dm3 = 10**3
 
         V_gc = self.V_gc_ind * self.N_gcs  # total volume of gc in leaf
 
@@ -194,7 +176,7 @@ class SuperModel:
         the equation outlined in the documentation"""
 
         P = PPFD * self.P_abs
-        P = P * 10 ** -3 * 60 * 60  # umolessec-1 -> mmoleshr-1
+        P = P * 10**-3 * 60 * 60  # umolessec-1 -> mmoleshr-1
 
         e = self.FqFm * self.R_ch
 
@@ -213,9 +195,7 @@ class SuperModel:
             P_gc_rounded = round(P_gc, 3)
             print(f"Photon influx into Guard cells: {P_gc_rounded}mmolphotonsm-2hr-1")
             P_me_rounded = round(P_me, 3)
-            print(
-                f"Photon influx into mesophyll cells: {P_me_rounded}mmolphotonsm-2hr-1"
-            )
+            print(f"Photon influx into mesophyll cells: {P_me_rounded}mmolphotonsm-2hr-1")
 
         return P_gc, P_me
 
@@ -233,7 +213,7 @@ class SuperModel:
 
         return self
 
-    def add_maintenance(self, me=True, gc=False):
+    def add_maintenance(self, me=True, gc=False, gc_scaling=0.3):
         """
         This function constrains the maintenance reactions in the model
         relative to the input of photons into the model.
@@ -242,7 +222,6 @@ class SuperModel:
         model = self.fba_model
 
         for i in range(1, check_number_of_models(model) + 1):
-            
             if me == True:
                 me_maintenance = model.problem.Constraint(
                     (
@@ -253,17 +232,15 @@ class SuperModel:
                     ub=1000,
                 )
                 model.add_cons_vars(me_maintenance)
-                
+
             if gc == True:
                 gc_maintenance = model.problem.Constraint(
                     (
                         model.reactions.get_by_id("ATPase_tx_gc_" + str(i)).flux_expression
                         - (
-                            (
-                                model.reactions.Photon_tx_gc_3.flux_expression * 0.0049
-                                + 2.7851
-                            ) *
-                            self.get_prop_gc(printouts=False)
+                            (model.reactions.Photon_tx_me_3.flux_expression * 0.0049 + 2.7851)
+                            * self.get_prop_gc(printouts=False)
+                            * gc_scaling
                         )
                     ),
                     lb=0,
@@ -274,9 +251,9 @@ class SuperModel:
         return self
 
     def get_atpase_constraint_value(self, flux_fmoles):
-        '''
+        """
         This method takes the flux in fmoles/h per guard cell for the H+-ATPase and returns the flux in mmoles/h/m2 that this corresponds to for the supermodel
-        '''
+        """
 
         flux_per_gc_moles = flux_fmoles / (10**15)
         atpase_flux = flux_per_gc_moles / (10**-3) * self.N_gcs
