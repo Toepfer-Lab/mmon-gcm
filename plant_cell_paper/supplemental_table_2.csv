@@ -5,6 +5,7 @@ A_l,1.0,1.0,m$^2$,Fixed,Fixed
 V_gc_ind,4.75e-13,4.1e-12,dm$^3$,Jezek and Blatt (2017),Hills et al. (2012)
 FqFm,0.79,0.9,Dimensionless,Lawson (2003),Lawson (2003)
 R_ch,0.035,0.18333333333333332,Dimensionless,"Fujiwara, Sanjaya, and Itoh (2019)","Fujiwara, Sanjaya, and Itoh (2019)"
+R_ch_vol,0.18894967177242888,0.21285848613070055,Dimensionless,Knoblauch et al. (2023),Knoblauch et al. (2023)
 L_air,0.185,0.37,Dimensionless,Ramonell et al. (2001),Earles et al. (2018)
 L_epidermis,0.1,0.24,Dimensionless,Willmer and Fricker (1996),Ramonell et al. (2001)
 Vac_frac,0.751,0.9,Dimensionless,Wang et al. (2017),Andrés et al. (2014) 
@@ -19,3 +20,4 @@ C_apo,0.023020072199999998,0.03730000000000001,mol$\cdot$dm$^{-3}$,Wang et al. (
 A_closed,1.0,4.0,µm,Jezek and Blatt (2017),Wang et al. (2017)
 A_open,2.75,12.0,µm,Horrer et al. (2016),Wang et al. (2017)
 ATPase,0.0,17.0,fmoles$\cdot$GC$^{-1}\cdot$h$^{-1}$,Supplementary,Flütsch et al. (2020)
+Maintenance,0.0,0.003,fmoles$\cdot$GC$^{-1}\cdot$h$^{-1}$,0 (no maintenance),Based on GC volume

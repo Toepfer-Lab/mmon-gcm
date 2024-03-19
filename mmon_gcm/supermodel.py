@@ -178,7 +178,7 @@ class SuperModel:
         P = PPFD * self.P_abs
         P = P * 10**-3 * 60 * 60  # umolessec-1 -> mmoleshr-1
 
-        e = self.FqFm * self.R_ch
+        e = self.FqFm * self.R_ch * self.R_ch_vol # added ratio of chloroplast volumes GC:MC
 
         v_prop_gc = self.get_prop_gc(printouts=printouts)
 
@@ -213,38 +213,46 @@ class SuperModel:
 
         return self
 
-    def add_maintenance(self, me=True, gc=False, gc_scaling=0.3):
+    def add_maintenance(self, me=True, gc=True, gc_scaling=1, 
+                        printouts=False, gc_ratio=4.4270867608601426e-05):
         """
         This function constrains the maintenance reactions in the model
         relative to the input of photons into the model.
+        Maintenance value based on Toepfer et al., (2020)
         """
 
         model = self.fba_model
+        prop_gc = gc_ratio
+        
+        # Maintenance in the dark - convert unit to mmol/m^2/h
+        dark_maintenance = 2.7851 * 10**-3 * 60 * 60  # umolessec-1 -> mmoleshr-1
 
         for i in range(1, check_number_of_models(model) + 1):
             if me == True:
                 me_maintenance = model.problem.Constraint(
                     (
                         model.reactions.get_by_id("ATPase_tx_me_" + str(i)).flux_expression
-                        - (model.reactions.Photon_tx_me_3.flux_expression * 0.0049 + 2.7851)
+                        - (model.reactions.get_by_id("Photon_tx_me_" + str(i)).flux_expression
+                        * 0.0049 + (dark_maintenance * (1 - prop_gc)))
+
                     ),
                     lb=0,
-                    ub=1000,
+                    ub=0,
                 )
                 model.add_cons_vars(me_maintenance)
 
             if gc == True:
                 gc_maintenance = model.problem.Constraint(
                     (
-                        model.reactions.get_by_id("ATPase_tx_gc_" + str(i)).flux_expression
+                       model.reactions.get_by_id("ATPase_tx_gc_" + str(i)).flux_expression
                         - (
-                            (model.reactions.Photon_tx_me_3.flux_expression * 0.0049 + 2.7851)
-                            * self.get_prop_gc(printouts=False)
+                            (model.reactions.get_by_id("Photon_tx_gc_" + str(i)).flux_expression
+                             * 0.0049 + (dark_maintenance * prop_gc))
                             * gc_scaling
                         )
                     ),
                     lb=0,
-                    ub=1000,
+                    ub=0,
                 )
                 model.add_cons_vars(gc_maintenance)
 
