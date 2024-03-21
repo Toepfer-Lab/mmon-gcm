@@ -2,13 +2,14 @@
 
 # %% auto 0
 __all__ = ['run_fva', 'no_processes', 'output_dir', 'model_file', 'map_file', 'parameters_file', 'four_stage_GC_model',
-           'parameters_df', 'arabidopsis_supermodel']
+           'parameters_df', 'arabidopsis_supermodel', 'PPFD']
 
 # %% ../src/2.1_solvingmodel.ipynb 3
 import json
 import sys
 
 import cobra
+
 # from x import y syntax doesn't work because of nbdev export format
 import mmon_gcm.buildingediting
 import mmon_gcm.solving
@@ -36,12 +37,11 @@ four_stage_GC_model = cobra.io.sbml.read_sbml_model(model_file)  # read model
 # %% ../src/2.1_solvingmodel.ipynb 10
 print(four_stage_GC_model.solver.configuration.tolerances.integrality)
 print(four_stage_GC_model.solver.configuration.tolerances.feasibility)
-four_stage_GC_model.solver.configuration.tolerances.feasibility = 1e-8  # 1e-9 takes a long time to solve
+four_stage_GC_model.solver.configuration.tolerances.feasibility = 1e-7
 print(four_stage_GC_model.solver.configuration.tolerances.feasibility)
 
 # %% ../src/2.1_solvingmodel.ipynb 12
 if run_fva == True:
-
     linker_list = [
         reaction
         for reaction in four_stage_GC_model.reactions
@@ -75,172 +75,248 @@ arabidopsis_supermodel = mmon_gcm.supermodel.SuperModel(parameters_df.loc[:, "Va
 # %% ../src/2.1_solvingmodel.ipynb 17
 arabidopsis_supermodel.get_volumes(printouts=True);
 
-# %% ../src/2.1_solvingmodel.ipynb 21
+# %% ../src/2.1_solvingmodel.ipynb 18
+arabidopsis_supermodel.get_volumes(printouts=True, per_guard_cell=False);
+
+# %% ../src/2.1_solvingmodel.ipynb 22
 arabidopsis_supermodel.constrain_osmolarity(printouts=True);
 
-# %% ../src/2.1_solvingmodel.ipynb 27
-arabidopsis_supermodel.constrain_photons(150, printouts=True);
-
 # %% ../src/2.1_solvingmodel.ipynb 28
-arabidopsis_supermodel.add_maintenance();
-
-# %% ../src/2.1_solvingmodel.ipynb 32
-with arabidopsis_supermodel.fba_model as m:
-
-    m.reactions.Photon_tx_gc_2.upper_bound = 0
-    m.reactions.Photon_tx_me_2.upper_bound = 0
-
-    blue_unconstrained_wt, blue_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 33
-blue_unconstrained_wt_solution.to_csv(output_dir + "blue_unconstrained_wt.csv")
-
-# %% ../src/2.1_solvingmodel.ipynb 35
-with arabidopsis_supermodel.fba_model as m:
-
-    m.reactions.Photon_tx_gc_2.upper_bound = 0
-    m.reactions.Photon_tx_me_2.upper_bound = 0
-    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
-
-    blue_unconstrained_starchko, blue_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 36
-blue_unconstrained_starchko_solution.to_csv(output_dir + "blue_unconstrained_starchko.csv")
+PPFD = 150
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=True);
 
 # %% ../src/2.1_solvingmodel.ipynb 39
-with arabidopsis_supermodel.fba_model as m:
-
-    m.reactions.Photon_tx_gc_2.upper_bound = 0
-    m.reactions.Photon_tx_me_2.upper_bound = 0
-
-    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
-    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
-
-    blue_constrained_wt, blue_constrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 40
-blue_constrained_wt_solution.to_csv(output_dir + "blue_constrained_wt.csv")
-
-# %% ../src/2.1_solvingmodel.ipynb 42
-with arabidopsis_supermodel.fba_model as m:
-
-    m.reactions.Photon_tx_gc_2.upper_bound = 0
-    m.reactions.Photon_tx_me_2.upper_bound = 0
-
-    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
-    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
-
-    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
-
-    blue_constrained_starchko, blue_constrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
+arabidopsis_supermodel.add_maintenance(gc=True, gc_ratio=4.4270867608601426e-05);
 
 # %% ../src/2.1_solvingmodel.ipynb 43
-blue_constrained_starchko_solution.to_csv(output_dir + "blue_constrained_starchko.csv")
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    m.reactions.Photon_tx_gc_2.upper_bound = 0
+    m.reactions.Photon_tx_me_2.upper_bound = 0
+    # Added this line to explictly set bounds for starch degradation
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, cobra.Configuration().upper_bound)
+
+    # Added this line to explictly set bounds for H+-ATPase in GC
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, cobra.Configuration().upper_bound)
+ 
+    (
+        blue_unconstrained_wt,
+        blue_unconstrained_wt_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
+
+# %% ../src/2.1_solvingmodel.ipynb 44
+blue_unconstrained_wt_solution.to_csv(output_dir + f"blue_unconstrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 46
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    m.reactions.Photon_tx_gc_2.upper_bound = 0
+    m.reactions.Photon_tx_me_2.upper_bound = 0
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
+    
+    # Added this line to explictly set bounds for H+-ATPase in GC
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, cobra.Configuration().upper_bound)
+
+    (
+        blue_unconstrained_starchko,
+        blue_unconstrained_starchko_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
 # %% ../src/2.1_solvingmodel.ipynb 47
-with arabidopsis_supermodel.fba_model as m:
-
-    white_unconstrained_wt, white_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 48
-white_unconstrained_wt_solution.to_csv(output_dir + "white_unconstrained_wt.csv")
+blue_unconstrained_starchko_solution.to_csv(output_dir + "blue_unconstrained_starchko.csv")
 
 # %% ../src/2.1_solvingmodel.ipynb 50
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
+    m.reactions.Photon_tx_gc_2.upper_bound = 0
+    m.reactions.Photon_tx_me_2.upper_bound = 0
+    # Added this line to explictly set bounds for starch degradation
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, cobra.Configuration().upper_bound)
 
-    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
+    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.5)
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
 
-    white_unconstrained_starchko, white_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
+    (
+        blue_constrained_wt,
+        blue_constrained_wt_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
 # %% ../src/2.1_solvingmodel.ipynb 51
-white_unconstrained_starchko_solution.to_csv(output_dir + "white_unconstrained_starchko.csv")
+blue_constrained_wt_solution.to_csv(output_dir + "blue_constrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 53
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    m.reactions.Photon_tx_gc_2.upper_bound = 0
+    m.reactions.Photon_tx_me_2.upper_bound = 0
+    
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
+
+    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.5)
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
+
+    (
+        blue_constrained_starchko,
+        blue_constrained_starchko_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
 # %% ../src/2.1_solvingmodel.ipynb 54
-with arabidopsis_supermodel.fba_model as m:
-
-    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
-    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
-
-    white_constrained_wt, white_constrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 55
-white_constrained_wt_solution.to_csv(output_dir + "white_constrained_wt.csv")
-
-# %% ../src/2.1_solvingmodel.ipynb 57
-with arabidopsis_supermodel.fba_model as m:
-
-    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
-    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
-
-    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
-
-    white_constrained_starchko, white_constrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
+blue_constrained_starchko_solution.to_csv(output_dir + "blue_constrained_starchko.csv")
 
 # %% ../src/2.1_solvingmodel.ipynb 58
-white_constrained_starchko_solution.to_csv(output_dir + "white_constrained_starchko.csv")
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    # Added this line to explictly set bounds for starch degradation
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, cobra.Configuration().upper_bound)
+
+    # Added this line to explictly set bounds for H+-ATPase in GC
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, cobra.Configuration().upper_bound)
+
+    (
+        white_unconstrained_wt,
+        white_unconstrained_wt_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
+
+# %% ../src/2.1_solvingmodel.ipynb 59
+white_unconstrained_wt_solution.to_csv(output_dir + "white_unconstrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 61
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
+    
+    # Added this line to explictly set bounds for H+-ATPase in GC
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, cobra.Configuration().upper_bound)
+
+    (
+        white_unconstrained_starchko,
+        white_unconstrained_starchko_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
 # %% ../src/2.1_solvingmodel.ipynb 62
-with arabidopsis_supermodel.fba_model as m:
-
-    for p in [1, 2, 3, 4]:
-        m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
-
-    nops_unconstrained_wt, nops_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
-
-# %% ../src/2.1_solvingmodel.ipynb 63
-nops_unconstrained_wt_solution.to_csv(output_dir + "nops_unconstrained_wt.csv")
+white_unconstrained_starchko_solution.to_csv(output_dir + "white_unconstrained_starchko.csv")
 
 # %% ../src/2.1_solvingmodel.ipynb 65
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
+    # Added this line to explictly set bounds for starch degradation
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, cobra.Configuration().upper_bound)
 
-    for p in [1, 2, 3, 4]:
-        m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
+    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.5)
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
 
-    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
-
-    nops_unconstrained_starchko, nops_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
+    (
+        white_constrained_wt,
+        white_constrained_wt_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
 # %% ../src/2.1_solvingmodel.ipynb 66
-nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_unconstrained_starchko.csv")
+white_constrained_wt_solution.to_csv(output_dir + "white_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 69
+# %% ../src/2.1_solvingmodel.ipynb 68
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
-
-    for p in [1, 2, 3, 4]:
-        m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
-
-    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
+    
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
+    
+    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.5)
     mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
 
-    nops_unconstrained_wt, nops_unconstrained_wt_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
+    (
+        white_constrained_starchko,
+        white_constrained_starchko_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 70
-nops_unconstrained_wt_solution.to_csv(output_dir + "nops_constrained_wt.csv")
+# %% ../src/2.1_solvingmodel.ipynb 69
+white_constrained_starchko_solution.to_csv(output_dir + "white_constrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 72
+# %% ../src/2.1_solvingmodel.ipynb 73
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
-
     for p in [1, 2, 3, 4]:
         m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
 
-    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.48)
+    # Added this line to explictly set bounds for starch degradation
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, cobra.Configuration().upper_bound)
+
+    # Added this line to explictly set bounds for H+-ATPase in GC
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, cobra.Configuration().upper_bound)
+
+    (
+        nops_unconstrained_wt,
+        nops_unconstrained_wt_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
+
+# %% ../src/2.1_solvingmodel.ipynb 74
+nops_unconstrained_wt_solution.to_csv(output_dir + "nops_unconstrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 76
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    for p in [1, 2, 3, 4]:
+        m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
+
+    # Added this line to explictly set bounds for H+-ATPase in GC
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, cobra.Configuration().upper_bound)
+
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
+    
+    (
+        nops_unconstrained_starchko,
+        nops_unconstrained_starchko_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
+
+# %% ../src/2.1_solvingmodel.ipynb 77
+nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_unconstrained_starchko.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 80
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    for p in [1, 2, 3, 4]:
+        m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
+
+    # Added this line to explictly set bounds for starch degradation
+    mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, cobra.Configuration().upper_bound)
+
+    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.5)
+    mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
+
+    (
+        nops_unconstrained_wt,
+        nops_unconstrained_wt_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
+
+# %% ../src/2.1_solvingmodel.ipynb 81
+nops_unconstrained_wt_solution.to_csv(output_dir + "nops_constrained_wt.csv")
+
+# %% ../src/2.1_solvingmodel.ipynb 83
+# Added this line to explictly set Photon constraint
+arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
+with arabidopsis_supermodel.fba_model as m:
+    for p in [1, 2, 3, 4]:
+        m.reactions.get_by_id(f"Photon_tx_gc_{p}").bounds = (0, 0)
+
+    gc_atpase_upper_bound = arabidopsis_supermodel.get_atpase_constraint_value(7.5)
     mmon_gcm.buildingediting.set_bounds_multi(m, "PROTON_ATPase_c_gc", 0, gc_atpase_upper_bound)
 
     mmon_gcm.buildingediting.set_bounds_multi(m, "RXN_1827_p_gc", 0, 0)
 
-    nops_unconstrained_starchko, nops_unconstrained_starchko_solution = mmon_gcm.solving.get_pfba_fva_solution(
-        m, rxn_list=fva_list, processes=no_processes)
+    (
+        nops_unconstrained_starchko,
+        nops_unconstrained_starchko_solution,
+    ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 73
+# %% ../src/2.1_solvingmodel.ipynb 84
 nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_constrained_starchko.csv")

@@ -37,7 +37,7 @@ def generate_constraints_df(constraints_df, params_df):
     return values_df
 
 # %% ../src/functions/constraintscan.ipynb 5
-def solve_model_for_constraint_scan(constraints, fba_model, light_colour, printouts=False):
+def solve_model_for_constraint_scan(constraints, fba_model, light_colour, printouts=False, maintenance=True):
     
     solution_number = constraints.name
 
@@ -48,9 +48,16 @@ def solve_model_for_constraint_scan(constraints, fba_model, light_colour, printo
 
     for p in [1, 2, 3, 4]:
         super_model.fba_model.reactions.get_by_id(f"PROTON_ATPase_c_gc_{p}").bounds = (0, gc_atpase_upper_bound)
+    
+    if maintenance:    
+        gc_maintenance_ratio = constraints.loc["Maintenance"]
+        super_model.add_maintenance(gc=True, gc_ratio=gc_maintenance_ratio, approach=4)
+    else:
+        super_model.add_maintenance(gc=True, gc_ratio=4.4270867608601426e-05, approach=4)
 
     if printouts is True:
         print(f"ATPase constrained to {gc_atpase_upper_bound}")
+        print(f"GC maintenance proportion = {gc_maintenance_ratio}")
 
     if light_colour == "blue":
         super_model.fba_model.reactions.Photon_tx_gc_2.upper_bound = 0

@@ -5,6 +5,7 @@ A_l,1.0,m$^2$,Fixed
 V_gc_ind,4.75e-13,dm$^3$,Jezek and Blatt (2017)
 FqFm,0.9,Dimensionless,Lawson (2003)
 R_ch,0.06923076923076923,Dimensionless,"Fujiwara, Sanjaya, and Itoh (2019)"
+R_ch_vol,0.20047597461468725,Dimensionless,Knoblauch et al. (2023)
 L_air,0.37,Dimensionless,Earles et al. (2018)
 L_epidermis,0.15,Dimensionless,Wuyts et al. (2010)
 Vac_frac,0.751,Dimensionless,Wang et al. (2017)
