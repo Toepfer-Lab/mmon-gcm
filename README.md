@@ -18,3 +18,8 @@ make sure you install the package in a venv with e.g. python 3.9.
 
 The project uses nbdev2 to autocreate packages and documentation from
 jupyter notebooks.
+
+### Contributions
+
+Noah Sprent developed and wrote the majority of the code. Maurice Cheung
+edited minor parts of the code for publication.

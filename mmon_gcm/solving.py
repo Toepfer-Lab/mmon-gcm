@@ -159,7 +159,7 @@ def get_weightings(model):
 
 # %% ../src/functions/solving.ipynb 11
 def flux_variability_analysis(
-    model: "Model",
+    model,
     reaction_list: Optional[List[Union["Reaction", str]]] = None,
     loopless: bool = False,
     fraction_of_optimum: float = 1.0,
