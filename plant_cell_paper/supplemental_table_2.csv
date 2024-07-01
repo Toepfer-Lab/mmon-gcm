@@ -20,4 +20,3 @@ C_apo,0.023020072199999998,0.03730000000000001,mol$\cdot$dm$^{-3}$,Wang et al. (
 A_closed,1.0,4.0,µm,Jezek and Blatt (2017),Wang et al. (2017)
 A_open,2.75,12.0,µm,Horrer et al. (2016),Wang et al. (2017)
 ATPase,0.0,17.0,fmoles$\cdot$GC$^{-1}\cdot$h$^{-1}$,Supplementary,Flütsch et al. (2020)
-Maintenance,0.0,0.003,fmoles$\cdot$GC$^{-1}\cdot$h$^{-1}$,0 (no maintenance),Based on GC volume

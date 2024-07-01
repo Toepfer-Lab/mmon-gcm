@@ -4,5 +4,5 @@ Osmotic Coefficient,Cell,Compartment,Metabolite
 0,gc,p,Starch
 0,me,p,Starch
 0,me,v,"4_amino_butyrate, Arg, Asn, Citrate, Cys, Gln, Glt, Gly, His, Ile, Leu, Lys, L_alpha_alanine, L_aspartate, Malate, Met, Phe, Pro, Ser, Sucrose, Thr, Trp, Tyr, Val, aCitrate, aMalate, bHis"
-1,gc,c,"Citrate, Cl, Fructose, Glucose, K, Malate, Nitrate, Sucrose"
+1,gc,c,"Citrate, Cl, Fructose, Glucose, K, Malate, Maltose, Nitrate, Sucrose"
 1,gc,v,"4_amino_butyrate, Arg, Asn, Citrate, Cys, Cl, Fructose, Glucose, Gln, Glt, Gly, His, Ile, K, Leu, Lys, L_alpha_alanine, L_aspartate, Malate, Met, Nitrate, Phe, Pro, Ser, Sucrose, Thr, Trp, Tyr, Val, aCitrate, aMalate, bHis"

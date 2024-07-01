@@ -214,7 +214,7 @@ class SuperModel:
         return self
 
     def add_maintenance(self, me=True, gc=True, gc_scaling=1, 
-                        printouts=False, gc_ratio=4.4270867608601426e-05):
+                        printouts=False, gc_ratio=4.427086760474383e-05): #gc_ratio from 2.0_compute_maintenance
         """
         This function constrains the maintenance reactions in the model
         relative to the input of photons into the model.

@@ -85,10 +85,10 @@ arabidopsis_supermodel.constrain_osmolarity(printouts=True);
 PPFD = 150
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=True);
 
-# %% ../src/2.1_solvingmodel.ipynb 39
-arabidopsis_supermodel.add_maintenance(gc=True, gc_ratio=4.4270867608601426e-05);
+# %% ../src/2.1_solvingmodel.ipynb 31
+arabidopsis_supermodel.add_maintenance(gc=True, gc_ratio=4.427086760474383e-05);
 
-# %% ../src/2.1_solvingmodel.ipynb 43
+# %% ../src/2.1_solvingmodel.ipynb 35
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -105,10 +105,10 @@ with arabidopsis_supermodel.fba_model as m:
         blue_unconstrained_wt_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 44
+# %% ../src/2.1_solvingmodel.ipynb 36
 blue_unconstrained_wt_solution.to_csv(output_dir + f"blue_unconstrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 46
+# %% ../src/2.1_solvingmodel.ipynb 38
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -124,10 +124,10 @@ with arabidopsis_supermodel.fba_model as m:
         blue_unconstrained_starchko_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 47
+# %% ../src/2.1_solvingmodel.ipynb 39
 blue_unconstrained_starchko_solution.to_csv(output_dir + "blue_unconstrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 50
+# %% ../src/2.1_solvingmodel.ipynb 42
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -144,10 +144,10 @@ with arabidopsis_supermodel.fba_model as m:
         blue_constrained_wt_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 51
+# %% ../src/2.1_solvingmodel.ipynb 43
 blue_constrained_wt_solution.to_csv(output_dir + "blue_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 53
+# %% ../src/2.1_solvingmodel.ipynb 45
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -164,10 +164,10 @@ with arabidopsis_supermodel.fba_model as m:
         blue_constrained_starchko_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 54
+# %% ../src/2.1_solvingmodel.ipynb 46
 blue_constrained_starchko_solution.to_csv(output_dir + "blue_constrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 58
+# %% ../src/2.1_solvingmodel.ipynb 50
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -182,10 +182,10 @@ with arabidopsis_supermodel.fba_model as m:
         white_unconstrained_wt_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 59
+# %% ../src/2.1_solvingmodel.ipynb 51
 white_unconstrained_wt_solution.to_csv(output_dir + "white_unconstrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 61
+# %% ../src/2.1_solvingmodel.ipynb 53
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -200,10 +200,10 @@ with arabidopsis_supermodel.fba_model as m:
         white_unconstrained_starchko_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 62
+# %% ../src/2.1_solvingmodel.ipynb 54
 white_unconstrained_starchko_solution.to_csv(output_dir + "white_unconstrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 65
+# %% ../src/2.1_solvingmodel.ipynb 57
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -218,10 +218,10 @@ with arabidopsis_supermodel.fba_model as m:
         white_constrained_wt_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 66
+# %% ../src/2.1_solvingmodel.ipynb 58
 white_constrained_wt_solution.to_csv(output_dir + "white_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 68
+# %% ../src/2.1_solvingmodel.ipynb 60
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -236,10 +236,10 @@ with arabidopsis_supermodel.fba_model as m:
         white_constrained_starchko_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 69
+# %% ../src/2.1_solvingmodel.ipynb 61
 white_constrained_starchko_solution.to_csv(output_dir + "white_constrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 73
+# %% ../src/2.1_solvingmodel.ipynb 65
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -257,10 +257,10 @@ with arabidopsis_supermodel.fba_model as m:
         nops_unconstrained_wt_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 74
+# %% ../src/2.1_solvingmodel.ipynb 66
 nops_unconstrained_wt_solution.to_csv(output_dir + "nops_unconstrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 76
+# %% ../src/2.1_solvingmodel.ipynb 68
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -277,10 +277,10 @@ with arabidopsis_supermodel.fba_model as m:
         nops_unconstrained_starchko_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 77
+# %% ../src/2.1_solvingmodel.ipynb 69
 nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_unconstrained_starchko.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 80
+# %% ../src/2.1_solvingmodel.ipynb 72
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -298,10 +298,10 @@ with arabidopsis_supermodel.fba_model as m:
         nops_unconstrained_wt_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 81
+# %% ../src/2.1_solvingmodel.ipynb 73
 nops_unconstrained_wt_solution.to_csv(output_dir + "nops_constrained_wt.csv")
 
-# %% ../src/2.1_solvingmodel.ipynb 83
+# %% ../src/2.1_solvingmodel.ipynb 75
 # Added this line to explictly set Photon constraint
 arabidopsis_supermodel.constrain_photons(PPFD, printouts=False)
 with arabidopsis_supermodel.fba_model as m:
@@ -318,5 +318,5 @@ with arabidopsis_supermodel.fba_model as m:
         nops_unconstrained_starchko_solution,
     ) = mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list=fva_list, processes=no_processes)
 
-# %% ../src/2.1_solvingmodel.ipynb 84
+# %% ../src/2.1_solvingmodel.ipynb 76
 nops_unconstrained_starchko_solution.to_csv(output_dir + "nops_constrained_starchko.csv")
