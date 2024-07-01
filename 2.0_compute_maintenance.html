@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>mmon-gcm - Solving guard cell models for different parameters</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="mmon-gcm - Solving guard cell models for different parameters">
+<meta property="og:description" content="Repo for MMON-gcm">
+<meta property="og:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta property="og:site_name" content="mmon-gcm">
+<meta name="twitter:title" content="mmon-gcm - Solving guard cell models for different parameters">
+<meta name="twitter:description" content="Repo for MMON-gcm">
+<meta name="twitter:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">mmon-gcm</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Solving guard cell models for different parameters</li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./logo.svg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MMON-GCM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Building model and defining parameters</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.0_generating_linkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generating table for linkers/osmolytes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.1_buildingmodel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.2_defining_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Finding parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.3_atpase_constraint.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is H+ATPase limiting?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">1.4_flutschconcentrations.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.5_convert_horrer_starch_level.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Starch amount estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Solving and analysing specific scenarios for paper</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.1_solvingmodel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solving guard cell models for different parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.2_analysingsolutions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing solutions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.3_flux_map_values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Calculating line widths for flux maps</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Running constraints scan</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.1_generate_constraints_df.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Constraint scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.2_run_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Constraint Scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.3_analyse_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing the results of the constraint scan</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Running and analysing alternative flux modes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">4.1_generate_alternative_flux_modes_matrix.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.2_run_alternative_flux_modes.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.3_analyse_alternative_flux_modes.ipynb</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+ <span class="menu-text">prep_plant_cell.ipynb</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/alternativemodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">alternativemodes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/analysing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/buildingediting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">buildingediting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/constraintscan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">constraintscan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/osmolyteconstraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">osmolyteconstraints</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/solving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">solving</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#instantiate-and-apply-base-constraints-to-model" id="toc-instantiate-and-apply-base-constraints-to-model" class="nav-link" data-scroll-target="#instantiate-and-apply-base-constraints-to-model">Instantiate and apply base constraints to model</a>
+  <ul class="collapse">
+  <li><a href="#import-fba-model" id="toc-import-fba-model" class="nav-link" data-scroll-target="#import-fba-model">Import FBA model</a></li>
+  <li><a href="#define-reactions-to-use-for-fva" id="toc-define-reactions-to-use-for-fva" class="nav-link" data-scroll-target="#define-reactions-to-use-for-fva">Define reactions to use for FVA</a></li>
+  <li><a href="#instantiate-supermodel" id="toc-instantiate-supermodel" class="nav-link" data-scroll-target="#instantiate-supermodel">Instantiate Supermodel</a></li>
+  <li><a href="#constrain-supermodel" id="toc-constrain-supermodel" class="nav-link" data-scroll-target="#constrain-supermodel">Constrain SuperModel</a></li>
+  </ul></li>
+  <li><a href="#run-fba-without-maintenance-to-get-sum-of-fluxes" id="toc-run-fba-without-maintenance-to-get-sum-of-fluxes" class="nav-link" data-scroll-target="#run-fba-without-maintenance-to-get-sum-of-fluxes">Run FBA without maintenance to get sum of fluxes</a>
+  <ul class="collapse">
+  <li><a href="#get-the-list-of-reactions-to-exclude-from-sum-of-fluxes-calculation" id="toc-get-the-list-of-reactions-to-exclude-from-sum-of-fluxes-calculation" class="nav-link" data-scroll-target="#get-the-list-of-reactions-to-exclude-from-sum-of-fluxes-calculation">Get the list of reactions to exclude from sum of fluxes calculation</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Solving guard cell models for different parameters</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p><span style="color:red"> <font size="6"> Remember to change maintenance ratio in 2.1 and supermodel.py </font> </span></p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div id="cell-4" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This cell isn't exported to the .py file, so define here if running in notebook rather than as .py on e.g.a cluster</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is where to adjust whether fva is run if running in notebook</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"run_fva"</span>: <span class="st">"True"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"no_processes"</span>: <span class="dv">6</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"output_dir"</span>: <span class="st">"../outputs/model_solutions/"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model_file"</span>: <span class="st">"../models/4_stage_GC.xml"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"map_file"</span>: <span class="st">"../inputs/map.json"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"parameters_file"</span>: <span class="st">"../inputs/arabidopsis_parameters.csv"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>sys.argv <span class="op">=</span> [<span class="st">"script_name"</span>] <span class="op">+</span> <span class="bu">list</span>(args.values())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="instantiate-and-apply-base-constraints-to-model" class="level2">
+<h2 class="anchored" data-anchor-id="instantiate-and-apply-base-constraints-to-model">Instantiate and apply base constraints to model</h2>
+<section id="import-fba-model" class="level3">
+<h3 class="anchored" data-anchor-id="import-fba-model">Import FBA model</h3>
+<p>Decrease tolerance</p>
+</section>
+<section id="define-reactions-to-use-for-fva" class="level3">
+<h3 class="anchored" data-anchor-id="define-reactions-to-use-for-fva">Define reactions to use for FVA</h3>
+</section>
+<section id="instantiate-supermodel" class="level3">
+<h3 class="anchored" data-anchor-id="instantiate-supermodel">Instantiate Supermodel</h3>
+<p>Import parameters from csv, created in <a href="./1.2_defining_parameters.html">parameters notebook</a></p>
+<p>This is a little different to Jezek and Blatt (2017), where they have closed as 0.3-0.4pL and open as 0.5-0.65. Open apertures are on the small side but still within their range (2-6). Wang used a volume of 0.4pL.</p>
+</section>
+<section id="constrain-supermodel" class="level3">
+<h3 class="anchored" data-anchor-id="constrain-supermodel">Constrain SuperModel</h3>
+<section id="constrain-osmolarity-of-the-model-using-the-equation-from-the-onguard-model-hills-et-al-2012" class="level4">
+<h4 class="anchored" data-anchor-id="constrain-osmolarity-of-the-model-using-the-equation-from-the-onguard-model-hills-et-al-2012">Constrain osmolarity of the model using the equation from the OnGuard model (Hills et al 2012)</h4>
+<div id="cell-14" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-15" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.array(arabidopsis_supermodel.get_osmolarities())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>array([0.03935933, 0.05492236, 0.03935933, 0.03935933])</code></pre>
+</div>
+</div>
+<div id="cell-16" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(arabidopsis_supermodel.get_osmolarities)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Help on method get_osmolarities in module mmon_gcm.supermodel:
+
+get_osmolarities(apertures='default', equation='onguard', printouts=False) method of mmon_gcm.supermodel.SuperModel instance
+    Calculates the osmolarities at each phase of the model using the equation
+    specified, default is onguard. Adds these as an attribute to the SuperModel
+</code></pre>
+</div>
+</div>
+<div id="cell-17" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mmoles_per_m2 <span class="op">=</span> np.array(arabidopsis_supermodel.get_osmolarities())</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mmoles_per_gc <span class="op">=</span> mmoles_per_m2 <span class="op">/</span> arabidopsis_supermodel.N_gcs</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>moles_per_gc <span class="op">=</span> mmoles_per_gc <span class="op">*</span> <span class="dv">10</span><span class="op">**-</span><span class="dv">3</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fmoles_per_gc <span class="op">=</span> moles_per_gc <span class="op">/</span> <span class="dv">10</span><span class="op">**-</span><span class="dv">15</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Closed fmoles: </span><span class="sc">{</span>fmoles_per_gc[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Open fmoles: </span><span class="sc">{</span>fmoles_per_gc[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Increase in fmoles: </span><span class="sc">{</span>fmoles_per_gc[<span class="dv">1</span>] <span class="op">-</span> fmoles_per_gc[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Closed fmoles: 67.86090968309483
+Open fmoles: 94.69373119804636
+Increase in fmoles: 26.832821514951533</code></pre>
+</div>
+</div>
+</section>
+<section id="constrain-photons-using-a-ppfd-of-150µmolm-2s-1-same-as-used-in-horrer-et-al-2016" class="level4">
+<h4 class="anchored" data-anchor-id="constrain-photons-using-a-ppfd-of-150µmolm-2s-1-same-as-used-in-horrer-et-al-2016">Constrain photons using a PPFD of 150µmolm<span class="math inline">\(^{-2}\)</span>s<span class="math inline">\(^{-1}\)</span>, same as used in Horrer et al (2016)</h4>
+</section>
+</section>
+</section>
+<section id="run-fba-without-maintenance-to-get-sum-of-fluxes" class="level2">
+<h2 class="anchored" data-anchor-id="run-fba-without-maintenance-to-get-sum-of-fluxes">Run FBA without maintenance to get sum of fluxes</h2>
+<div id="cell-20" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">### Blue Light Unconstrained H+-ATPase WT</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound) </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        blue_unconstrained_wt,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        blue_unconstrained_wt_solution,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'blue_uncon_wt'</span>] <span class="op">=</span> blue_unconstrained_wt_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">### Blue Light Unconstrained H+-ATPase Starch KO</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound) </span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        blue_unconstrained_ko,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        blue_unconstrained_ko_solution,</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'blue_uncon_ko'</span>] <span class="op">=</span> blue_unconstrained_ko_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co">### Blue Light Constrained H+-ATPase WT</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        blue_constrained_wt,</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        blue_constrained_wt_solution,</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'blue_con_wt'</span>] <span class="op">=</span> blue_constrained_wt_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a><span class="co">### Blue Light Constrained H+-ATPase Starch KO</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound) </span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>        blue_constrained_ko,</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>        blue_constrained_ko_solution,</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'blue_con_ko'</span>] <span class="op">=</span> blue_constrained_ko_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="co">### White Light Unconstrained H+-ATPase WT</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound) </span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>        white_unconstrained_wt,</span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>        white_unconstrained_wt_solution,</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'white_uncon_wt'</span>] <span class="op">=</span> white_unconstrained_wt_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="co">### White Light Unconstrained H+-ATPase Starch KO</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound) </span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>        white_unconstrained_ko,</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>        white_unconstrained_ko_solution,</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'white_uncon_ko'</span>] <span class="op">=</span> white_unconstrained_ko_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a><span class="co">### White Light Constrained H+-ATPase WT</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>        white_constrained_wt,</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>        white_constrained_wt_solution,</span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'white_con_wt'</span>] <span class="op">=</span> white_constrained_wt_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a><span class="co">### White Light Constrained H+-ATPase Starch KO</span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound) </span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>        white_constrained_ko,</span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>        white_constrained_ko_solution,</span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'white_con_ko'</span>] <span class="op">=</span> white_constrained_ko_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a><span class="co">### No PS Unconstrained H+-ATPase WT</span></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]:</span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a>        m.reactions.get_by_id(<span class="ss">f"Photon_tx_gc_</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>).bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound) </span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a>        nops_unconstrained_wt,</span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>        nops_unconstrained_wt_solution,</span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'nops_uncon_wt'</span>] <span class="op">=</span> nops_unconstrained_wt_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a><span class="co">### No PS Unconstrained H+-ATPase Starch KO</span></span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]:</span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a>        m.reactions.get_by_id(<span class="ss">f"Photon_tx_gc_</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>).bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound) </span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a>        nops_unconstrained_ko,</span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a>        nops_unconstrained_ko_solution,</span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'nops_uncon_ko'</span>] <span class="op">=</span> nops_unconstrained_ko_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a><span class="co">### No PS Constrained H+-ATPase WT</span></span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]:</span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a>        m.reactions.get_by_id(<span class="ss">f"Photon_tx_gc_</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>).bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true" tabindex="-1"></a>        nops_constrained_wt,</span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a>        nops_constrained_wt_solution,</span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'nops_con_wt'</span>] <span class="op">=</span> nops_constrained_wt_solution[<span class="st">'fluxes'</span>]</span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true" tabindex="-1"></a><span class="co">### No PS Constrained H+-ATPase Starch KO</span></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_gc_2.upper_bound = 0</span></span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true" tabindex="-1"></a>    <span class="co">#m.reactions.Photon_tx_me_2.upper_bound = 0</span></span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]:</span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a>        m.reactions.get_by_id(<span class="ss">f"Photon_tx_gc_</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>).bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound) </span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a>        nops_constrained_ko,</span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>        nops_constrained_ko_solution,</span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true" tabindex="-1"></a>no_maintenance_solutions[<span class="st">'nops_con_ko'</span>] <span class="op">=</span> nops_constrained_ko_solution[<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Started running pFBA (and FVA) @ 2024-05-29 11:00:18.771459
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:00:32.121406, that took 0.2224991202354431 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:00:32.142613
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:00:45.305443, that took 0.21938050587972005 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:00:45.317288
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:01:01.051978, that took 0.26224482456843057 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:01:01.061748
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:01:16.650575, that took 0.25981378157933555 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:01:16.676700
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:01:31.049585, that took 0.23954807917277018 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:01:31.059779
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:01:43.139856, that took 0.20133462349573772 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:01:43.147558
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:01:56.033926, that took 0.21477279663085938 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:01:56.054080
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:02:08.338509, that took 0.20474048455556235 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:02:08.346494
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:02:21.707902, that took 0.22269012133280436 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:02:21.716943
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:02:34.071597, that took 0.20591090122858682 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:02:34.083323
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:02:45.305673, that took 0.18703916470209758 minutes
+Started running pFBA (and FVA) @ 2024-05-29 11:02:45.319825
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-05-29 11:02:57.736401, that took 0.20694292783737184 minutes</code></pre>
+</div>
+</div>
+<section id="get-the-list-of-reactions-to-exclude-from-sum-of-fluxes-calculation" class="level3">
+<h3 class="anchored" data-anchor-id="get-the-list-of-reactions-to-exclude-from-sum-of-fluxes-calculation">Get the list of reactions to exclude from sum of fluxes calculation</h3>
+<div id="cell-22" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sum_fluxes_exclude <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> <span class="bu">list</span>(no_maintenance_solutions.index):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    parts <span class="op">=</span> r.split(<span class="st">'_'</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> parts[<span class="op">-</span><span class="dv">1</span>] <span class="kw">in</span> [<span class="st">'gc'</span>, <span class="st">'me'</span>, <span class="st">'day'</span>, <span class="st">'overall'</span>, <span class="st">'night'</span>]: <span class="co"># not in ['1', '2', '3', '4']</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        sum_fluxes_exclude.add(r)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> parts[<span class="op">-</span><span class="dv">2</span>] <span class="kw">in</span> [<span class="st">'tx'</span>, <span class="st">'pseudolinker'</span>, <span class="st">'Linker'</span>, <span class="st">'a'</span>]: <span class="co"># not in ['me', 'gc']</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>            sum_fluxes_exclude.add(r)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> parts[<span class="op">-</span><span class="dv">3</span>] <span class="kw">in</span> [<span class="st">'ae'</span>, <span class="st">'t'</span>, <span class="st">'b'</span>, <span class="st">'ep'</span>, <span class="st">'tx'</span>, <span class="st">'biomass'</span>]: <span class="co"># not in ['cv', 'p', 'xc', 'pc', 'mc', 'im', 'vc', 'mi', 'v', 'c', 'm', 'x', 'ec', 'pr', 'r', 'ce', 'cwINV']</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                sum_fluxes_exclude.add(r)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="st">'constraint'</span> <span class="kw">in</span> r:</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                    sum_fluxes_exclude.add(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter solution with only metabolic reactions and transporters (with constrained H+-ATPase only)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>filtered_df <span class="op">=</span> no_maintenance_solutions.loc[<span class="op">~</span>no_maintenance_solutions.index.isin(sum_fluxes_exclude), no_maintenance_solutions.columns.<span class="bu">str</span>.contains(<span class="st">'_con_'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-24" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>phase_length <span class="op">=</span> {<span class="st">'1'</span>: <span class="dv">6</span>, <span class="st">'2'</span>: <span class="fl">0.5</span>, <span class="st">'3'</span>: <span class="fl">11.5</span>, <span class="st">'4'</span>: <span class="dv">6</span>}</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> multiply_by_hours(row):</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    index_suffix <span class="op">=</span> row.name.split(<span class="st">'_'</span>)[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    factor <span class="op">=</span> phase_length[index_suffix]</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row <span class="op">*</span> factor</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>scaled_df <span class="op">=</span> filtered_df.<span class="bu">apply</span>(multiply_by_hours, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#gc_sum_flux = filtered_df[filtered_df.index.str.contains('|'.join(['_gc_1', '_gc_4']))].abs().sum()</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#me_sum_flux = filtered_df[filtered_df.index.str.contains('|'.join(['_me_1', '_me_4']))].abs().sum()</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>gc_sum_flux <span class="op">=</span> scaled_df[scaled_df.index.<span class="bu">str</span>.contains(<span class="st">'_gc_'</span>)].<span class="bu">abs</span>().<span class="bu">sum</span>()</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>me_sum_flux <span class="op">=</span> scaled_df[scaled_df.index.<span class="bu">str</span>.contains(<span class="st">'_me_'</span>)].<span class="bu">abs</span>().<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-25" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#print(scaled_df)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gc_sum_flux)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(me_sum_flux)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>blue_con_wt     0.901933
+blue_con_ko     0.899520
+white_con_wt    0.918848
+white_con_ko    0.921276
+nops_con_wt     0.201886
+nops_con_ko     0.214510
+dtype: float64
+blue_con_wt     20142.122686
+blue_con_ko     20142.122755
+white_con_wt    20994.863369
+white_con_ko    20994.863952
+nops_con_wt     20994.859108
+nops_con_ko     20994.859400
+dtype: float64</code></pre>
+</div>
+</div>
+<div id="cell-26" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>gc_me_ratio <span class="op">=</span> gc_sum_flux<span class="op">/</span>me_sum_flux</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gc_me_ratio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>blue_con_wt     0.000045
+blue_con_ko     0.000045
+white_con_wt    0.000044
+white_con_ko    0.000044
+nops_con_wt     0.000010
+nops_con_ko     0.000010
+dtype: float64</code></pre>
+</div>
+</div>
+<div id="cell-27" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>gc_me_ratio.head(<span class="dv">4</span>).mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>4.427086760474383e-05</code></pre>
+</div>
+</div>
+<p>Ratio of GC:ME maintenance = 4.427086760474383e-05 (Update value in 2.1_solvingmodel AND in supermodel.py)</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/noahsprent\.github\.io\/mmon-gcm");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

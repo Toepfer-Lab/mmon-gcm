@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>mmon-gcm - Solving guard cell models for different parameters</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./2.2_analysingsolutions.html" rel="next">
+<link href="./1.5_convert_horrer_starch_level.html" rel="prev">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="mmon-gcm - Solving guard cell models for different parameters">
+<meta property="og:description" content="Repo for MMON-gcm">
+<meta property="og:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta property="og:site_name" content="mmon-gcm">
+<meta name="twitter:title" content="mmon-gcm - Solving guard cell models for different parameters">
+<meta name="twitter:description" content="Repo for MMON-gcm">
+<meta name="twitter:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">mmon-gcm</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1_solvingmodel.html">Solving and analysing specific scenarios for paper</a></li><li class="breadcrumb-item"><a href="./2.1_solvingmodel.html">Solving guard cell models for different parameters</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./logo.svg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MMON-GCM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Building model and defining parameters</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.0_generating_linkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generating table for linkers/osmolytes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.1_buildingmodel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.2_defining_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Finding parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.3_atpase_constraint.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is H+ATPase limiting?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">1.4_flutschconcentrations.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.5_convert_horrer_starch_level.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Starch amount estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Solving and analysing specific scenarios for paper</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.1_solvingmodel.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Solving guard cell models for different parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.2_analysingsolutions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing solutions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.3_flux_map_values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Calculating line widths for flux maps</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Running constraints scan</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.1_generate_constraints_df.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Constraint scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.2_run_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Constraint Scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.3_analyse_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing the results of the constraint scan</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Running and analysing alternative flux modes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">4.1_generate_alternative_flux_modes_matrix.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.2_run_alternative_flux_modes.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.3_analyse_alternative_flux_modes.ipynb</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+ <span class="menu-text">prep_plant_cell.ipynb</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/alternativemodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">alternativemodes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/analysing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/buildingediting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">buildingediting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/constraintscan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">constraintscan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/osmolyteconstraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">osmolyteconstraints</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/solving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">solving</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#instantiate-and-apply-base-constraints-to-model" id="toc-instantiate-and-apply-base-constraints-to-model" class="nav-link" data-scroll-target="#instantiate-and-apply-base-constraints-to-model">Instantiate and apply base constraints to model</a>
+  <ul class="collapse">
+  <li><a href="#import-fba-model" id="toc-import-fba-model" class="nav-link" data-scroll-target="#import-fba-model">Import FBA model</a></li>
+  <li><a href="#define-reactions-to-use-for-fva" id="toc-define-reactions-to-use-for-fva" class="nav-link" data-scroll-target="#define-reactions-to-use-for-fva">Define reactions to use for FVA</a></li>
+  <li><a href="#instantiate-supermodel" id="toc-instantiate-supermodel" class="nav-link" data-scroll-target="#instantiate-supermodel">Instantiate Supermodel</a></li>
+  <li><a href="#constrain-supermodel" id="toc-constrain-supermodel" class="nav-link" data-scroll-target="#constrain-supermodel">Constrain SuperModel</a></li>
+  </ul></li>
+  <li><a href="#add-maintenance-constraint-to-model" id="toc-add-maintenance-constraint-to-model" class="nav-link" data-scroll-target="#add-maintenance-constraint-to-model">Add maintenance constraint to model</a>
+  <ul class="collapse">
+  <li><a href="#test-blocking-complex-iii-in-blue-light-wt" id="toc-test-blocking-complex-iii-in-blue-light-wt" class="nav-link" data-scroll-target="#test-blocking-complex-iii-in-blue-light-wt">Test blocking Complex III in blue light WT</a></li>
+  <li><a href="#test-for-maltose-degradation-pathways" id="toc-test-for-maltose-degradation-pathways" class="nav-link" data-scroll-target="#test-for-maltose-degradation-pathways">Test for maltose degradation pathways</a></li>
+  </ul></li>
+  <li><a href="#test-blocking-hexose-accumulation---see-maltose-accumulation" id="toc-test-blocking-hexose-accumulation---see-maltose-accumulation" class="nav-link" data-scroll-target="#test-blocking-hexose-accumulation---see-maltose-accumulation">Test blocking hexose accumulation - See maltose accumulation</a>
+  <ul class="collapse">
+  <li><a href="#blue-light" id="toc-blue-light" class="nav-link" data-scroll-target="#blue-light">Blue Light</a>
+  <ul class="collapse">
+  <li><a href="#atpase-unconstrained" id="toc-atpase-unconstrained" class="nav-link" data-scroll-target="#atpase-unconstrained">ATPase unconstrained</a></li>
+  <li><a href="#constrained-atpase" id="toc-constrained-atpase" class="nav-link" data-scroll-target="#constrained-atpase">Constrained ATPase</a></li>
+  </ul></li>
+  <li><a href="#white-light" id="toc-white-light" class="nav-link" data-scroll-target="#white-light">White Light</a>
+  <ul class="collapse">
+  <li><a href="#unconstrained-atpase" id="toc-unconstrained-atpase" class="nav-link" data-scroll-target="#unconstrained-atpase">Unconstrained ATPase</a></li>
+  <li><a href="#constrained-atpase-1" id="toc-constrained-atpase-1" class="nav-link" data-scroll-target="#constrained-atpase-1">Constrained ATPase</a></li>
+  </ul></li>
+  <li><a href="#guard-cell-has-no-photosynthetic-capacity" id="toc-guard-cell-has-no-photosynthetic-capacity" class="nav-link" data-scroll-target="#guard-cell-has-no-photosynthetic-capacity">Guard cell has no photosynthetic capacity</a>
+  <ul class="collapse">
+  <li><a href="#unconstrained-atpase-1" id="toc-unconstrained-atpase-1" class="nav-link" data-scroll-target="#unconstrained-atpase-1">Unconstrained ATPase</a></li>
+  <li><a href="#constrained-atpase-2" id="toc-constrained-atpase-2" class="nav-link" data-scroll-target="#constrained-atpase-2">Constrained ATPase</a></li>
+  </ul></li>
+  <li><a href="#scan-gc-photon-influx-to-look-at-switch-of-glycolysis" id="toc-scan-gc-photon-influx-to-look-at-switch-of-glycolysis" class="nav-link" data-scroll-target="#scan-gc-photon-influx-to-look-at-switch-of-glycolysis">Scan GC photon influx to look at switch of glycolysis</a></li>
+  <li><a href="#scan-gc-me-photosynthesis-photon-influx-during-opening" id="toc-scan-gc-me-photosynthesis-photon-influx-during-opening" class="nav-link" data-scroll-target="#scan-gc-me-photosynthesis-photon-influx-during-opening">Scan GC &amp; ME photosynthesis (photon influx) during Opening</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1_solvingmodel.html">Solving and analysing specific scenarios for paper</a></li><li class="breadcrumb-item"><a href="./2.1_solvingmodel.html">Solving guard cell models for different parameters</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Solving guard cell models for different parameters</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div id="cell-3" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This cell isn't exported to the .py file, so define here if running in notebook rather than as .py on e.g.a cluster</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is where to adjust whether fva is run if running in notebook</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"run_fva"</span>: <span class="st">"True"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"no_processes"</span>: <span class="dv">4</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"output_dir"</span>: <span class="st">"../outputs/model_solutions/"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model_file"</span>: <span class="st">"../models/4_stage_GC.xml"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"map_file"</span>: <span class="st">"../inputs/map.json"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"parameters_file"</span>: <span class="st">"../inputs/arabidopsis_parameters.csv"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>sys.argv <span class="op">=</span> [<span class="st">"script_name"</span>] <span class="op">+</span> <span class="bu">list</span>(args.values())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="instantiate-and-apply-base-constraints-to-model" class="level2">
+<h2 class="anchored" data-anchor-id="instantiate-and-apply-base-constraints-to-model">Instantiate and apply base constraints to model</h2>
+<section id="import-fba-model" class="level3">
+<h3 class="anchored" data-anchor-id="import-fba-model">Import FBA model</h3>
+<p>Decrease tolerance</p>
+</section>
+<section id="define-reactions-to-use-for-fva" class="level3">
+<h3 class="anchored" data-anchor-id="define-reactions-to-use-for-fva">Define reactions to use for FVA</h3>
+</section>
+<section id="instantiate-supermodel" class="level3">
+<h3 class="anchored" data-anchor-id="instantiate-supermodel">Instantiate Supermodel</h3>
+<p>Import parameters from csv, created in <a href="./1.2_defining_parameters.html">parameters notebook</a></p>
+<p>This is a little different to Jezek and Blatt (2017), where they have closed as 0.3-0.4pL and open as 0.5-0.65. Open apertures are on the small side but still within their range (2-6). Wang used a volume of 0.4pL.</p>
+</section>
+<section id="constrain-supermodel" class="level3">
+<h3 class="anchored" data-anchor-id="constrain-supermodel">Constrain SuperModel</h3>
+<section id="constrain-osmolarity-of-the-model-using-the-equation-from-the-onguard-model-hills-et-al-2012" class="level4">
+<h4 class="anchored" data-anchor-id="constrain-osmolarity-of-the-model-using-the-equation-from-the-onguard-model-hills-et-al-2012">Constrain osmolarity of the model using the equation from the OnGuard model (Hills et al 2012)</h4>
+<div id="cell-13" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-14" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.array(arabidopsis_supermodel.get_osmolarities())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>array([0.03935933, 0.05492236, 0.03935933, 0.03935933])</code></pre>
+</div>
+</div>
+<div id="cell-15" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(arabidopsis_supermodel.get_osmolarities)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Help on method get_osmolarities in module mmon_gcm.supermodel:
+
+get_osmolarities(apertures='default', equation='onguard', printouts=False) method of mmon_gcm.supermodel.SuperModel instance
+    Calculates the osmolarities at each phase of the model using the equation
+    specified, default is onguard. Adds these as an attribute to the SuperModel
+</code></pre>
+</div>
+</div>
+<div id="cell-16" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mmoles_per_m2 <span class="op">=</span> np.array(arabidopsis_supermodel.get_osmolarities())</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mmoles_per_gc <span class="op">=</span> mmoles_per_m2 <span class="op">/</span> arabidopsis_supermodel.N_gcs</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>moles_per_gc <span class="op">=</span> mmoles_per_gc <span class="op">*</span> <span class="dv">10</span><span class="op">**-</span><span class="dv">3</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fmoles_per_gc <span class="op">=</span> moles_per_gc <span class="op">/</span> <span class="dv">10</span><span class="op">**-</span><span class="dv">15</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Closed fmoles: </span><span class="sc">{</span>fmoles_per_gc[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Open fmoles: </span><span class="sc">{</span>fmoles_per_gc[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Increase in fmoles: </span><span class="sc">{</span>fmoles_per_gc[<span class="dv">1</span>] <span class="op">-</span> fmoles_per_gc[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Closed fmoles: 67.86090968309483
+Open fmoles: 94.69373119804636
+Increase in fmoles: 26.832821514951533</code></pre>
+</div>
+</div>
+</section>
+<section id="constrain-photons-using-a-ppfd-of-150µmolm-2s-1-same-as-used-in-horrer-et-al-2016" class="level4">
+<h4 class="anchored" data-anchor-id="constrain-photons-using-a-ppfd-of-150µmolm-2s-1-same-as-used-in-horrer-et-al-2016">Constrain photons using a PPFD of 150µmolm<span class="math inline">\(^{-2}\)</span>s<span class="math inline">\(^{-1}\)</span>, same as used in Horrer et al (2016)</h4>
+</section>
+</section>
+</section>
+<section id="add-maintenance-constraint-to-model" class="level2">
+<h2 class="anchored" data-anchor-id="add-maintenance-constraint-to-model">Add maintenance constraint to model</h2>
+<p>gc_ratio is the ratio of gc vs me maintenance obtained from 2.0_compute_maintenance</p>
+<section id="test-blocking-complex-iii-in-blue-light-wt" class="level3">
+<h3 class="anchored" data-anchor-id="test-blocking-complex-iii-in-blue-light-wt">Test blocking Complex III in blue light WT</h3>
+<div id="cell-21" class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"SUCCINATE_DEHYDROGENASE_UBIQUINONE_RXN_mc_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"SUCCINATE_DEHYDROGENASE_UBIQUINONE_RXN_mi_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Added this line to explictly set bounds for starch degradation</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    (no_CIII, no_CIII_sol) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Started running pFBA (and FVA) @ 2024-06-20 18:29:37.018698
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-06-20 18:29:48.834174, that took 0.19692460695902506 minutes</code></pre>
+</div>
+</div>
+<div id="cell-22" class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"SUCCINATE_DEHYDROGENASE_UBIQUINONE_RXN_mc_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, cobra.Configuration().upper_bound</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"SUCCINATE_DEHYDROGENASE_UBIQUINONE_RXN_mi_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, cobra.Configuration().upper_bound</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Added this line to explictly set bounds for starch degradation</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    (CIII, CIII_sol) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Started running pFBA (and FVA) @ 2024-06-20 18:29:25.458722
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-06-20 18:29:37.003048, that took 0.19240544239679971 minutes</code></pre>
+</div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>CIII_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>14.25882479432091</code></pre>
+</div>
+</div>
+<div id="cell-24" class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>no_CIII_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<pre><code>14.258823306193605</code></pre>
+</div>
+</div>
+<p>Phloem_tx_overall: 14.258823306193605 without Complex III; 14.25882479432091 with Complex III</p>
+</section>
+<section id="test-for-maltose-degradation-pathways" class="level3">
+<h3 class="anchored" data-anchor-id="test-for-maltose-degradation-pathways">Test for maltose degradation pathways</h3>
+<div id="cell-27" class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"RXN_2141_p_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"RXN_2141_p_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Added this line to explictly set bounds for starch degradation</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    (maltose_c, maltose_c_sol) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Started running pFBA (and FVA) @ 2024-06-20 21:03:53.851992
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-06-20 21:04:05.724912, that took 0.19788201252619425 minutes</code></pre>
+</div>
+</div>
+<div id="cell-28" class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"RXN_2141_p_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, cobra.Configuration().upper_bound</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"RXN_2141_p_gc_2"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, cobra.Configuration().upper_bound</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.constrain_photons(PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_gc_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    m.reactions.Photon_tx_me_2.upper_bound <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Added this line to explictly set bounds for starch degradation</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    (maltose_pc, maltose_pc_sol) <span class="op">=</span> mmon_gcm.solving.get_pfba_fva_solution(m, rxn_list<span class="op">=</span>[], processes<span class="op">=</span>no_processes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Started running pFBA (and FVA) @ 2024-06-20 21:03:40.588376
+Running pFBA
+FVA list is empty
+Finished running pFBA (and FVA) @ 2024-06-20 21:03:53.784066, that took 0.21992816925048828 minutes</code></pre>
+</div>
+</div>
+<div id="cell-29" class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>maltose_pc_sol.loc[[<span class="st">'Phloem_tx_overall'</span>, <span class="st">'RXN_2141_p_gc_2'</span>, <span class="st">'MALTODEG_RXN_c_gc_2'</span>]][<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<pre><code>Phloem_tx_overall      1.425882e+01
+RXN_2141_p_gc_2        5.259830e-03
+MALTODEG_RXN_c_gc_2   -2.062496e-13
+Name: fluxes, dtype: float64</code></pre>
+</div>
+</div>
+<div id="cell-30" class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>maltose_pc_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
+<pre><code>14.258823306193605</code></pre>
+</div>
+</div>
+<div id="cell-31" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>maltose_c_sol.loc[[<span class="st">'Phloem_tx_overall'</span>, <span class="st">'RXN_2141_p_gc_2'</span>, <span class="st">'MALTODEG_RXN_c_gc_2'</span>]][<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<pre><code>Phloem_tx_overall      14.258821
+RXN_2141_p_gc_2         0.000000
+MALTODEG_RXN_c_gc_2     0.006945
+Name: fluxes, dtype: float64</code></pre>
+</div>
+</div>
+<div id="cell-32" class="cell" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>maltose_c_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+<pre><code>14.258821433564357</code></pre>
+</div>
+</div>
+<div id="cell-33" class="cell" data-execution_count="47">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(maltose_pc_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>]<span class="op">-</span>maltose_c_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>])<span class="op">/</span>maltose_pc_sol.loc[<span class="st">'Phloem_tx_overall'</span>].loc[<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="47">
+<pre><code>1.3133126120572098e-07</code></pre>
+</div>
+</div>
+<div id="cell-34" class="cell" data-execution_count="50">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>maltose_c_sol.loc[[<span class="st">'GLC_c_gc_Linker_2'</span>, <span class="st">'MALTOSE_c_gc_Linker_2'</span>, <span class="st">'GLC_c_gc_Linker_1'</span>, <span class="st">'MALTOSE_c_gc_Linker_1'</span>]][<span class="st">'fluxes'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="50">
+<pre><code>GLC_c_gc_Linker_2        0.003473
+MALTOSE_c_gc_Linker_2    0.006744
+GLC_c_gc_Linker_1        0.000000
+MALTOSE_c_gc_Linker_1    0.006744
+Name: fluxes, dtype: float64</code></pre>
+</div>
+</div>
+<div id="cell-35" class="cell" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(maltose_c_sol[maltose_c_sol.index.<span class="bu">str</span>.contains(<span class="st">"gc_2"</span>) <span class="op">&amp;</span> (maltose_c_sol[<span class="st">'fluxes'</span>].<span class="bu">abs</span>() <span class="op">&gt;</span> <span class="fl">0.0000001</span>)].sort_values(by<span class="op">=</span><span class="st">'fluxes'</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             fluxes  minimum  maximum
+Pi_PROTON_mc_gc_2                         -0.010418      NaN      NaN
+H2O_pc_gc_2                               -0.007739      NaN      NaN
+EX_X_O2_t_gc_2                            -0.001810      NaN      NaN
+CO2_tx_gc_2                               -0.001810      NaN      NaN
+CO2_ec_gc_2                               -0.001810      NaN      NaN
+ISOCITDEH_RXN_c_gc_2                      -0.001736      NaN      NaN
+OAA_MAL_pc_gc_2                           -0.001736      NaN      NaN
+O2_mc_gc_2                                -0.001736      NaN      NaN
+PGLUCISOM_RXN_p_gc_2                      -0.001207      NaN      NaN
+X5P_Pi_pc_gc_2                            -0.000868      NaN      NaN
+RIB5PISOM_RXN_p_gc_2                      -0.000603      NaN      NaN
+1TRANSKETO_RXN_p_gc_2                     -0.000603      NaN      NaN
+F16ALDOLASE_RXN_c_gc_2                    -0.000302      NaN      NaN
+2_PERIOD_7_PERIOD_1_PERIOD_90_RXN_c_gc_2  -0.000302      NaN      NaN
+GLUC1PURIDYLTRANS_RXN_c_gc_2              -0.000138      NaN      NaN
+UDPKIN_RXN_c_gc_2                         -0.000138      NaN      NaN
+O2_pc_gc_2                                -0.000074      NaN      NaN
+NADPHox_p_tx_gc_2                          0.000148      NaN      NaN
+PROTON_PPi_rev_vc_gc_2                     0.000164      NaN      NaN
+G6P_Pi_pc_gc_2                             0.000265      NaN      NaN
+TRIOSEPISOMERIZATION_RXN_p_gc_2            0.000302      NaN      NaN
+DHAP_Pi_pc_gc_2                            0.000302      NaN      NaN
+GAP_Pi_pc_gc_2                             0.000302      NaN      NaN
+RIBULP3EPIM_RXN_p_gc_2                     0.000339      NaN      NaN
+ATPase_tx_gc_2                             0.000444      NaN      NaN
+2TRANSKETO_RXN_p_gc_2                      0.000603      NaN      NaN
+TRANSALDOL_RXN_p_gc_2                      0.000603      NaN      NaN
+GLU6PDEHYDROG_RXN_c_gc_2                   0.000868      NaN      NaN
+6PGLUCONOLACT_RXN_c_gc_2                   0.000868      NaN      NaN
+RIBULP3EPIM_RXN_c_gc_2                     0.000868      NaN      NaN
+6PGLUCONDEHYDROG_RXN_c_gc_2                0.000868      NaN      NaN
+CO2_pc_gc_2                                0.000942      NaN      NaN
+6PGLUCONDEHYDROG_RXN_p_gc_2                0.000942      NaN      NaN
+GLU6PDEHYDROG_RXN_p_gc_2                   0.000942      NaN      NaN
+6PGLUCONOLACT_RXN_p_gc_2                   0.000942      NaN      NaN
+MALATE_DEHYDROGENASE_NADPs_RXN_p_gc_2      0.001736      NaN      NaN
+2KG_MAL_mc_gc_2                            0.001736      NaN      NaN
+CO2_mc_gc_2                                0.001736      NaN      NaN
+MALATE_DEH_RXN_m_gc_2                      0.001736      NaN      NaN
+CYTOCHROME_C_OXIDASE_RXN_mi_gc_2           0.001736      NaN      NaN
+ISOCITRATE_DEHYDROGENASE_NAD_RXN_m_gc_2    0.001736      NaN      NaN
+OAA_ISOCITRATE_mc_gc_2                     0.001736      NaN      NaN
+EX_X_CO2_t_gc_2                            0.001810      NaN      NaN
+O2_ec_gc_2                                 0.001810      NaN      NaN
+O2_tx_gc_2                                 0.001810      NaN      NaN
+Mitochondrial_ATP_Synthase_m_gc_2          0.003473      NaN      NaN
+1_PERIOD_10_PERIOD_2_PERIOD_2_RXN_mi_gc_2  0.003473      NaN      NaN
+NADH_DEHYDROG_A_RXN_mi_gc_2                0.003473      NaN      NaN
+Cl_PROTON_ec_gc_2                          0.004350      NaN      NaN
+PROTON_ATPase_c_gc_2                       0.004350      NaN      NaN
+PROTONATP_rev_vc_gc_2                      0.005762      NaN      NaN
+PGLUCISOM_RXN_c_gc_2                       0.006479      NaN      NaN
+SUCROSE_PHOSPHATE_SYNTHASE_RXN_c_gc_2      0.006781      NaN      NaN
+SUCROSE_PHOSPHATASE_RXN_c_gc_2             0.006781      NaN      NaN
+SUCROSE_SYNTHASE_RXN_c_gc_2                0.006919      NaN      NaN
+RXN_14351_pc_gc_2                          0.006945      NaN      NaN
+RXN_1827_p_gc_2                            0.006945      NaN      NaN
+MALTODEG_RXN_c_gc_2                        0.006945      NaN      NaN
+RXN0_5184_c_gc_2                           0.006945      NaN      NaN
+PHOSPHOGLUCMUT_RXN_c_gc_2                  0.007083      NaN      NaN
+Cl_ae_gc_2                                 0.008700      NaN      NaN
+K_ec_gc_2                                  0.008700      NaN      NaN
+K_ae_gc_2                                  0.008700      NaN      NaN
+ATP_ADP_mc_gc_2                            0.010418      NaN      NaN
+K_PROTON_cv_gc_2                           0.011688      NaN      NaN
+Cl_cv_gc_2                                 0.011688      NaN      NaN
+H2O_ec_gc_2                                0.012217      NaN      NaN
+WATER_ae_gc_2                              0.012217      NaN      NaN
+pseudoOs_constraint_c_gc_2                 0.013676      NaN      NaN
+H2O_mc_gc_2                                0.013891      NaN      NaN
+pseudoOs_constraint_v_gc_2                 0.041247      NaN      NaN</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="test-blocking-hexose-accumulation---see-maltose-accumulation" class="level1">
+<h1>Test blocking hexose accumulation - See maltose accumulation</h1>
+<div id="cell-37" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#for i in range(4):</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#arabidopsis_supermodel.fba_model.reactions.get_by_id("GLC_c_gc_Linker_" + str(i+1)).bounds = 0, 0</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#arabidopsis_supermodel.fba_model.reactions.get_by_id("GLC_v_gc_Linker_" + str(i+1)).bounds = 0, 0</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#arabidopsis_supermodel.fba_model.reactions.get_by_id("FRU_c_gc_Linker_" + str(i+1)).bounds = 0, 0</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#arabidopsis_supermodel.fba_model.reactions.get_by_id("FRU_v_gc_Linker_" + str(i+1)).bounds = 0, 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="blue-light" class="level2">
+<h2 class="anchored" data-anchor-id="blue-light">Blue Light</h2>
+<section id="atpase-unconstrained" class="level3">
+<h3 class="anchored" data-anchor-id="atpase-unconstrained">ATPase unconstrained</h3>
+<section id="wt" class="level4">
+<h4 class="anchored" data-anchor-id="wt">WT</h4>
+</section>
+<section id="starch-ko" class="level4">
+<h4 class="anchored" data-anchor-id="starch-ko">Starch KO</h4>
+</section>
+</section>
+<section id="constrained-atpase" class="level3">
+<h3 class="anchored" data-anchor-id="constrained-atpase">Constrained ATPase</h3>
+<section id="wt-1" class="level4">
+<h4 class="anchored" data-anchor-id="wt-1">WT</h4>
+</section>
+<section id="starch-ko-1" class="level4">
+<h4 class="anchored" data-anchor-id="starch-ko-1">Starch KO</h4>
+</section>
+</section>
+</section>
+<section id="white-light" class="level2">
+<h2 class="anchored" data-anchor-id="white-light">White Light</h2>
+<section id="unconstrained-atpase" class="level3">
+<h3 class="anchored" data-anchor-id="unconstrained-atpase">Unconstrained ATPase</h3>
+<section id="wt-2" class="level4">
+<h4 class="anchored" data-anchor-id="wt-2">WT</h4>
+</section>
+<section id="starch-ko-2" class="level4">
+<h4 class="anchored" data-anchor-id="starch-ko-2">Starch KO</h4>
+</section>
+</section>
+<section id="constrained-atpase-1" class="level3">
+<h3 class="anchored" data-anchor-id="constrained-atpase-1">Constrained ATPase</h3>
+<section id="wt-3" class="level4">
+<h4 class="anchored" data-anchor-id="wt-3">WT</h4>
+</section>
+<section id="starch-ko-3" class="level4">
+<h4 class="anchored" data-anchor-id="starch-ko-3">Starch KO</h4>
+</section>
+</section>
+</section>
+<section id="guard-cell-has-no-photosynthetic-capacity" class="level2">
+<h2 class="anchored" data-anchor-id="guard-cell-has-no-photosynthetic-capacity">Guard cell has no photosynthetic capacity</h2>
+<section id="unconstrained-atpase-1" class="level3">
+<h3 class="anchored" data-anchor-id="unconstrained-atpase-1">Unconstrained ATPase</h3>
+<section id="wt-4" class="level4">
+<h4 class="anchored" data-anchor-id="wt-4">WT</h4>
+</section>
+<section id="starch-ko-4" class="level4">
+<h4 class="anchored" data-anchor-id="starch-ko-4">Starch KO</h4>
+</section>
+</section>
+<section id="constrained-atpase-2" class="level3">
+<h3 class="anchored" data-anchor-id="constrained-atpase-2">Constrained ATPase</h3>
+<section id="wt-5" class="level4">
+<h4 class="anchored" data-anchor-id="wt-5">WT</h4>
+</section>
+<section id="starch-ko-5" class="level4">
+<h4 class="anchored" data-anchor-id="starch-ko-5">Starch KO</h4>
+</section>
+</section>
+</section>
+<section id="scan-gc-photon-influx-to-look-at-switch-of-glycolysis" class="level2">
+<h2 class="anchored" data-anchor-id="scan-gc-photon-influx-to-look-at-switch-of-glycolysis">Scan GC photon influx to look at switch of glycolysis</h2>
+<div id="cell-60" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>P_gc, P_me <span class="op">=</span> arabidopsis_supermodel.get_photons(PPFD<span class="op">=</span>PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, p <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="dv">0</span>, P_me, P_me, <span class="dv">0</span>], start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    arabidopsis_supermodel.fba_model.reactions.get_by_id(<span class="st">"Photon_tx_me_"</span> <span class="op">+</span> <span class="bu">str</span>(i)).bounds <span class="op">=</span> <span class="dv">0</span>, p</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Added this line to explictly set bounds for starch degradation</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    scan_df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> photon <span class="kw">in</span> <span class="bu">range</span>(PPFD<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>        P_gc, P_me <span class="op">=</span> arabidopsis_supermodel.get_photons(PPFD<span class="op">=</span>photon, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, p <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="dv">0</span>, P_gc, P_gc, <span class="dv">0</span>], start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>            m.reactions.get_by_id(<span class="st">"Photon_tx_gc_"</span> <span class="op">+</span> <span class="bu">str</span>(i)).bounds <span class="op">=</span> <span class="dv">0</span>, p</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>        cobra_model, solution <span class="op">=</span> mmon_gcm.solving.pfba_Weighted(m, objective<span class="op">=</span><span class="st">"Phloem_tx_overall"</span>)</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>        scan_df[photon] <span class="op">=</span> solution.fluxes</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(photon, solution.fluxes[<span class="st">'Photon_tx_gc_2'</span>], solution.fluxes[<span class="st">'Photon_tx_me_2'</span>])</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>scan_df.to_csv(<span class="st">"../outputs/scans/gc_photon_scan.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0 0.0 485.98162812525
+1 0.000122479164998293 485.98162812525
+2 0.000244958329996587 485.98162812525
+3 0.00036743749499488 485.98162812525
+4 0.000489916659993173 485.98162812525
+5 0.000612395824991467 485.98162812525
+6 0.00073487498998976 485.98162812525
+7 0.000857354154988053 485.98162812525
+8 0.000979833319986346 485.98162812525
+9 0.00110231248498464 485.98162812525
+10 0.00122479164998293 485.98162812525
+11 0.00134727081498123 485.98162812525
+12 0.00146974997997952 485.98162812525
+13 0.00159222914497781 485.98162812525
+14 0.00171470830997611 485.98162812525
+15 0.0018371874749744 485.98162812525
+16 0.00195966663997269 485.98162812525
+17 0.00208214580497099 485.98162812525
+18 0.00220462496996928 485.98162812525
+19 0.00232710413496757 485.98162812525
+20 0.00244958329996587 485.98162812525
+21 0.00257206246496416 485.98162812525
+22 0.00269454162996245 485.98162812525
+23 0.00281702079496075 485.98162812525
+24 0.00293949995995904 485.98162812525
+25 0.00306197912495733 485.98162812525
+26 0.00318445828995563 485.98162812525
+27 0.00330693745495392 485.98162812525
+28 0.00342941661995221 485.98162812525
+29 0.00355189578495051 485.98162812525
+30 0.0036743749499488 485.98162812525
+31 0.00379685411494709 485.98162812525
+32 0.00391933327994539 485.98162812525
+33 0.00404181244494368 485.98162812525
+34 0.00416429160994197 485.98162812525
+35 0.00428677077494027 485.98162812525
+36 0.00440924993993856 485.98162812525
+37 0.00453172910493685 485.98162812525
+38 0.00465420826993515 485.98162812525
+39 0.00477668743493344 485.98162812525
+40 0.00489916659993173 485.98162812525
+41 0.00502164576493003 485.98162812525
+42 0.00514412492992832 485.98162812525
+43 0.00526660409492661 485.98162812525
+44 0.00538908325992491 485.98162812525
+45 0.0055115624249232 485.98162812525
+46 0.00563404158992149 485.98162812525
+47 0.00575652075491979 485.98162812525
+48 0.00587899991991808 485.98162812525
+49 0.00600147908491637 485.98162812525
+50 0.00612395824991467 485.98162812525
+51 0.00624643741491296 485.98162812525
+52 0.00636891657991125 485.98162812525
+53 0.00649139574490955 485.98162812525
+54 0.00661387490990784 485.98162812525
+55 0.00673635407490613 485.98162812525
+56 0.00685883323990443 485.98162812525
+57 0.00698131240490272 485.98162812525
+58 0.00710379156990101 485.98162812525
+59 0.00722627073489931 485.98162812525
+60 0.0073487498998976 485.98162812525
+61 0.00747122906489589 485.98162812525
+62 0.00759370822989419 485.98162812525
+63 0.00771618739489248 485.98162812525
+64 0.00783866655989077 485.98162812525
+65 0.00796114572488907 485.98162812525
+66 0.00808362488988736 485.98162812525
+67 0.00820610405488565 485.98162812525
+68 0.00832858321988395 485.98162812525
+69 0.00845106238488224 485.98162812525
+70 0.00857354154988053 485.98162812525
+71 0.00869602071487883 485.98162812525
+72 0.00881849987987712 485.98162812525
+73 0.00894097904487541 485.98162812525
+74 0.00906345820987371 485.98162812525
+75 0.009185937374872 485.98162812525
+76 0.00930841653987029 485.98162812525
+77 0.00943089570486859 485.98162812525
+78 0.00955337486986688 485.98162812525
+79 0.00967585403486517 485.98162812525
+80 0.00979833319986347 485.98162812525
+81 0.00992081236486176 485.98162812525
+82 0.0100432915298601 485.98162812525
+83 0.0101657706948583 485.98162812525
+84 0.0102882498598566 485.98162812525
+85 0.0104107290248549 485.98162812525
+86 0.0105332081898532 485.98162812525
+87 0.0106556873548515 485.98162812525
+88 0.0107781665198498 485.98162812525
+89 0.0109006456848481 485.98162812525
+90 0.0110231248498464 485.98162812525
+91 0.0111456040148447 485.98162812525
+92 0.011268083179843 485.98162812525
+93 0.0113905623448413 485.98162812525
+94 0.0115130415098396 485.98162812525
+95 0.0116355206748379 485.98162812525
+96 0.0117579998398362 485.98162812525
+97 0.0118804790048345 485.98162812525
+98 0.0120029581698327 485.98162812525
+99 0.012125437334831 485.98162812525
+100 0.0122479164998293 485.98162812525
+101 0.0123703956648276 485.98162812525
+102 0.0124928748298259 485.98162812525
+103 0.0126153539948242 485.98162812525
+104 0.0127378331598225 485.98162812525
+105 0.0128603123248208 485.98162812525
+106 0.0129827914898191 485.98162812525
+107 0.0131052706548174 485.98162812525
+108 0.0132277498198157 485.98162812525
+109 0.013350228984814 485.98162812525
+110 0.0134727081498123 485.98162812525
+111 0.0135951873148106 485.98162812525
+112 0.0137176664798089 485.98162812525
+113 0.0138401456448071 485.98162812525
+114 0.0139626248098054 485.98162812525
+115 0.0140851039748037 485.98162812525
+116 0.014207583139802 485.98162812525
+117 0.0143300623048003 485.98162812525
+118 0.0144525414697986 485.98162812525
+119 0.0145750206347969 485.98162812525
+120 0.0146974997997952 485.98162812525
+121 0.0148199789647935 485.98162812525
+122 0.0149424581297918 485.98162812525
+123 0.0150649372947901 485.98162812525
+124 0.0151874164597884 485.98162812525
+125 0.0153098956247867 485.98162812525
+126 0.015432374789785 485.98162812525
+127 0.0155548539547832 485.98162812525
+128 0.0156773331197815 485.98162812525
+129 0.0157998122847798 485.98162812525
+130 0.0159222914497781 485.98162812525
+131 0.0160447706147764 485.98162812525
+132 0.0161672497797747 485.98162812525
+133 0.016289728944773 485.98162812525
+134 0.0164122081097713 485.98162812525
+135 0.0165346872747696 485.98162812525
+136 0.0166571664397679 485.98162812525
+137 0.0167796456047662 485.98162812525
+138 0.0169021247697645 485.98162812525
+139 0.0170246039347628 485.98162812525
+140 0.0171470830997611 485.98162812525
+141 0.0172695622647594 485.98162812525
+142 0.0173920414297577 485.98162812525
+143 0.0175145205947559 485.98162812525
+144 0.0176369997597542 485.98162812525
+145 0.0177594789247525 485.98162812525
+146 0.0178819580897508 485.98162812525
+147 0.0180044372547491 485.98162812525
+148 0.0181269164197474 485.98162812525
+149 0.0182493955847457 485.98162812525
+150 0.018371874749744 485.98162812525</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4142017668.py:19: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes</code></pre>
+</div>
+</div>
+</section>
+<section id="scan-gc-me-photosynthesis-photon-influx-during-opening" class="level2">
+<h2 class="anchored" data-anchor-id="scan-gc-me-photosynthesis-photon-influx-during-opening">Scan GC &amp; ME photosynthesis (photon influx) during Opening</h2>
+<p>Increase upper bound of photon influx in GC &amp; ME during blue light</p>
+<div id="cell-63" class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>P_gc_day, P_me_day <span class="op">=</span> arabidopsis_supermodel.get_photons(PPFD<span class="op">=</span>PPFD, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> arabidopsis_supermodel.fba_model <span class="im">as</span> m:</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Added this line to explictly set bounds for starch degradation</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"RXN_1827_p_gc"</span>, <span class="dv">0</span>, cobra.Configuration().upper_bound)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    gc_atpase_upper_bound <span class="op">=</span> arabidopsis_supermodel.get_atpase_constraint_value(<span class="fl">7.5</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    mmon_gcm.buildingediting.set_bounds_multi(m, <span class="st">"PROTON_ATPase_c_gc"</span>, <span class="dv">0</span>, gc_atpase_upper_bound)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    scan_df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> photon <span class="kw">in</span> <span class="bu">range</span>(PPFD<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>        P_gc_open, P_me_open <span class="op">=</span> arabidopsis_supermodel.get_photons(PPFD<span class="op">=</span>photon, printouts<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, p <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="dv">0</span>, P_me_open, P_me_day, <span class="dv">0</span>], start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>            m.reactions.get_by_id(<span class="st">"Photon_tx_me_"</span> <span class="op">+</span> <span class="bu">str</span>(i)).bounds <span class="op">=</span> <span class="dv">0</span>, p</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, p <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="dv">0</span>, P_gc_open, P_gc_day, <span class="dv">0</span>], start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>            m.reactions.get_by_id(<span class="st">"Photon_tx_gc_"</span> <span class="op">+</span> <span class="bu">str</span>(i)).bounds <span class="op">=</span> <span class="dv">0</span>, p</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>        cobra_model, solution <span class="op">=</span> mmon_gcm.solving.pfba_Weighted(m, objective<span class="op">=</span><span class="st">"Phloem_tx_overall"</span>)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>        scan_df[photon] <span class="op">=</span> solution.fluxes</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(photon, solution.fluxes[<span class="st">'Photon_tx_gc_2'</span>], solution.fluxes[<span class="st">'Photon_tx_me_2'</span>],</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>              solution.fluxes[<span class="st">'Photon_tx_gc_3'</span>], solution.fluxes[<span class="st">'Photon_tx_me_3'</span>])</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>scan_df.to_csv(<span class="st">"../outputs/scans/opening_photon_scan.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0 0.0 0.0 0.018371874749744 485.98162812525
+1 0.000122479164998293 3.239877520835 0.018371874749744 485.98162812525
+2 0.000244958329996587 6.47975504167 0.018371874749744 485.98162812525
+3 0.00036743749499488 9.71963256250501 0.018371874749744 485.98162812525
+4 0.000489916659993173 12.95951008334 0.018371874749744 485.98162812525
+5 0.000612395824991467 16.199387604175 0.018371874749744 485.98162812525
+6 0.00073487498998976 19.43926512501 0.018371874749744 485.98162812525
+7 0.000857354154988053 22.679142645845 0.018371874749744 485.98162812525
+8 0.000979833319986346 25.91902016668 0.018371874749744 485.98162812525
+9 0.00110231248498464 29.158897687515 0.018371874749744 485.98162812525
+10 0.00122479164998293 32.39877520835 0.018371874749744 485.98162812525
+11 0.00134727081498123 35.638652729185 0.018371874749744 485.98162812525
+12 0.00146974997997952 38.87853025002 0.018371874749744 485.98162812525
+13 0.00159222914497781 42.118407770855 0.018371874749744 485.98162812525
+14 0.00171470830997611 45.35828529169 0.018371874749744 485.98162812525
+15 0.0018371874749744 48.598162812525 0.018371874749744 485.98162812525
+16 0.00195966663997269 51.83804033336 0.018371874749744 485.98162812525
+17 0.00208214580497099 55.077917854195 0.018371874749744 485.98162812525
+18 0.00220462496996928 58.31779537503 0.018371874749744 485.98162812525
+19 0.00232710413496757 61.557672895865 0.018371874749744 485.98162812525
+20 0.00244958329996587 64.7975504167 0.018371874749744 485.98162812525
+21 0.00257206246496416 68.037427937535 0.018371874749744 485.98162812525
+22 0.00269454162996245 71.2773054583701 0.018371874749744 485.98162812525
+23 0.00281702079496075 74.517182979205 0.018371874749744 485.98162812525
+24 0.00293949995995904 77.75706050004 0.018371874749744 485.98162812525
+25 0.00306197912495733 80.996938020875 0.018371874749744 485.98162812525
+26 0.00318445828995563 84.2368155417101 0.018371874749744 485.98162812525
+27 0.00330693745495392 87.4766930625451 0.018371874749744 485.98162812525
+28 0.00342941661995221 90.71657058338 0.018371874749744 485.98162812525
+29 0.00355189578495051 93.9564481042151 0.018371874749744 485.98162812525
+30 0.0036743749499488 97.19632562505 0.018371874749744 485.98162812525
+31 0.00379685411494709 100.436203145885 0.018371874749744 485.98162812525
+32 0.00391933327994539 103.67608066672 0.018371874749744 485.98162812525
+33 0.00404181244494368 106.915958187555 0.018371874749744 485.98162812525
+34 0.00416429160994197 110.15583570839 0.018371874749744 485.98162812525
+35 0.00428677077494027 113.395713229225 0.018371874749744 485.98162812525
+36 0.00440924993993856 116.63559075006 0.018371874749744 485.98162812525
+37 0.00453172910493685 119.875468270895 0.018371874749744 485.98162812525
+38 0.00465420826993515 123.11534579173 0.018371874749744 485.98162812525
+39 0.00477668743493344 126.355223312565 0.018371874749744 485.98162812525
+40 0.00489916659993173 129.5951008334 0.018371874749744 485.98162812525
+41 0.00502164576493003 132.834978354235 0.018371874749744 485.98162812525
+42 0.00514412492992832 136.07485587507 0.018371874749744 485.98162812525
+43 0.00526660409492661 139.314733395905 0.018371874749744 485.98162812525
+44 0.00538908325992491 142.55461091674 0.018371874749744 485.98162812525
+45 0.0055115624249232 145.794488437575 0.018371874749744 485.98162812525
+46 0.00563404158992149 149.03436595841 0.018371874749744 485.98162812525
+47 0.00575652075491979 152.274243479245 0.018371874749744 485.98162812525
+48 0.00587899991991808 155.51412100008 0.018371874749744 485.98162812525
+49 0.00600147908491637 158.753998520915 0.018371874749744 485.98162812525
+50 0.00612395824991467 161.99387604175 0.018371874749744 485.98162812525
+51 0.00624643741491296 165.233753562585 0.018371874749744 485.98162812525
+52 0.00636891657991125 168.47363108342 0.018371874749744 485.98162812525
+53 0.00649139574490955 171.713508604255 0.018371874749744 485.98162812525
+54 0.00661387490990784 174.95338612509 0.018371874749744 485.98162812525
+55 0.00673635407490613 178.193263645925 0.018371874749744 485.98162812525
+56 0.00685883323990443 181.43314116676 0.018371874749744 485.98162812525
+57 0.00698131240490272 184.673018687595 0.018371874749744 485.98162812525
+58 0.00710379156990101 187.91289620843 0.018371874749744 485.98162812525
+59 0.00722627073489931 191.152773729265 0.018371874749744 485.98162812525
+60 0.0073487498998976 194.3926512501 0.018371874749744 485.98162812525
+61 0.00747122906489589 197.632528770935 0.018371874749744 485.98162812525
+62 0.00759370822989419 200.87240629177 0.018371874749744 485.98162812525
+63 0.00771618739489248 204.112283812605 0.018371874749744 485.98162812525
+64 0.00783866655989077 207.35216133344 0.018371874749744 485.98162812525
+65 0.00796114572488907 210.592038854275 0.018371874749744 485.98162812525
+66 0.00808362488988736 213.83191637511 0.018371874749744 485.98162812525
+67 0.00820610405488565 217.071793895945 0.018371874749744 485.98162812525
+68 0.00832858321988395 220.31167141678 0.018371874749744 485.98162812525
+69 0.00845106238488224 223.551548937615 0.018371874749744 485.98162812525
+70 0.00857354154988053 226.79142645845 0.018371874749744 485.98162812525
+71 0.00869602071487883 230.031303979285 0.018371874749744 485.98162812525
+72 0.00881849987987712 233.27118150012 0.018371874749744 485.98162812525
+73 0.00894097904487541 236.511059020955 0.018371874749744 485.98162812525
+74 0.00906345820987371 239.75093654179 0.018371874749744 485.98162812525
+75 0.009185937374872 242.990814062625 0.018371874749744 485.98162812525
+76 0.00930841653987029 246.23069158346 0.018371874749744 485.98162812525
+77 0.00943089570486859 249.470569104295 0.018371874749744 485.98162812525
+78 0.00955337486986688 252.71044662513 0.018371874749744 485.98162812525
+79 0.00967585403486517 255.950324145965 0.018371874749744 485.98162812525
+80 0.00979833319986347 259.1902016668 0.018371874749744 485.98162812525
+81 0.00992081236486176 262.430079187635 0.018371874749744 485.98162812525
+82 0.0100432915298601 265.66995670847 0.018371874749744 485.98162812525
+83 0.0101657706948583 268.909834229305 0.018371874749744 485.98162812525
+84 0.0102882498598566 272.14971175014 0.018371874749744 485.98162812525
+85 0.0104107290248549 275.389589270975 0.018371874749744 485.98162812525
+86 0.0105332081898532 278.62946679181 0.018371874749744 485.98162812525
+87 0.0106556873548515 281.869344312645 0.018371874749744 485.98162812525
+88 0.0107781665198498 285.10922183348 0.018371874749744 485.98162812525
+89 0.0109006456848481 288.349099354315 0.018371874749744 485.98162812525
+90 0.0110231248498464 291.58897687515 0.018371874749744 485.98162812525
+91 0.0111456040148447 294.828854395985 0.018371874749744 485.98162812525
+92 0.011268083179843 298.06873191682 0.018371874749744 485.98162812525
+93 0.0113905623448413 301.308609437655 0.018371874749744 485.98162812525
+94 0.0115130415098396 304.54848695849 0.018371874749744 485.98162812525
+95 0.0116355206748379 307.788364479325 0.018371874749744 485.98162812525
+96 0.0117579998398362 311.02824200016 0.018371874749744 485.98162812525
+97 0.0118804790048345 314.268119520995 0.018371874749744 485.98162812525
+98 0.0120029581698327 317.50799704183 0.018371874749744 485.98162812525
+99 0.012125437334831 320.747874562665 0.018371874749744 485.98162812525
+100 0.0122479164998293 323.9877520835 0.018371874749744 485.98162812525
+101 0.0123703956648276 327.227629604335 0.018371874749744 485.98162812525
+102 0.0124928748298259 330.46750712517 0.018371874749744 485.98162812525
+103 0.0126153539948242 333.707384646005 0.018371874749744 485.98162812525
+104 0.0127378331598225 336.94726216684 0.018371874749744 485.98162812525
+105 0.0128603123248208 340.187139687675 0.018371874749744 485.98162812525
+106 0.0129827914898191 343.42701720851 0.018371874749744 485.98162812525
+107 0.0131052706548174 346.666894729345 0.018371874749744 485.98162812525
+108 0.0132277498198157 349.90677225018 0.018371874749744 485.98162812525
+109 0.013350228984814 353.146649771015 0.018371874749744 485.98162812525
+110 0.0134727081498123 356.38652729185 0.018371874749744 485.98162812525
+111 0.0135951873148106 359.626404812685 0.018371874749744 485.98162812525
+112 0.0137176664798089 362.86628233352 0.018371874749744 485.98162812525
+113 0.0138401456448071 366.106159854355 0.018371874749744 485.98162812525
+114 0.0139626248098054 369.34603737519 0.018371874749744 485.98162812525
+115 0.0140851039748037 372.585914896025 0.018371874749744 485.98162812525
+116 0.014207583139802 375.82579241686 0.018371874749744 485.98162812525
+117 0.0143300623048003 379.065669937695 0.018371874749744 485.98162812525
+118 0.0144525414697986 382.30554745853 0.018371874749744 485.98162812525
+119 0.0145750206347969 385.545424979365 0.018371874749744 485.98162812525
+120 0.0146974997997952 388.7853025002 0.018371874749744 485.98162812525
+121 0.0148199789647935 392.025180021035 0.018371874749744 485.98162812525
+122 0.0149424581297918 395.26505754187 0.018371874749744 485.98162812525
+123 0.0150649372947901 398.504935062705 0.018371874749744 485.98162812525
+124 0.0151874164597884 401.74481258354 0.018371874749744 485.98162812525
+125 0.0153098956247867 404.984690104375 0.018371874749744 485.98162812525
+126 0.015432374789785 408.22456762521 0.018371874749744 485.98162812525
+127 0.0155548539547832 411.464445146045 0.018371874749744 485.98162812525
+128 0.0156773331197815 414.70432266688 0.018371874749744 485.98162812525
+129 0.0157998122847798 417.944200187715 0.018371874749744 485.98162812525
+130 0.0159222914497781 421.18407770855 0.018371874749744 485.98162812525
+131 0.0160447706147764 424.423955229385 0.018371874749744 485.98162812525
+132 0.0161672497797747 427.66383275022 0.018371874749744 485.98162812525
+133 0.016289728944773 430.903710271055 0.018371874749744 485.98162812525
+134 0.0164122081097713 434.14358779189 0.018371874749744 485.98162812525
+135 0.0165346872747696 437.383465312725 0.018371874749744 485.98162812525
+136 0.0166571664397679 440.62334283356 0.018371874749744 485.98162812525
+137 0.0167796456047662 443.863220354395 0.018371874749744 485.98162812525
+138 0.0169021247697645 447.10309787523 0.018371874749744 485.98162812525
+139 0.0170246039347628 450.342975396065 0.018371874749744 485.98162812525
+140 0.0171470830997611 453.5828529169 0.018371874749744 485.98162812525
+141 0.0172695622647594 456.822730437735 0.018371874749744 485.98162812525
+142 0.0173920414297577 460.06260795857 0.018371874749744 485.98162812525
+143 0.0175145205947559 463.302485479405 0.018371874749744 485.98162812525
+144 0.0176369997597542 466.54236300024 0.018371874749744 485.98162812525
+145 0.0177594789247525 469.782240521075 0.018371874749744 485.98162812525
+146 0.0178819580897508 473.02211804191 0.018371874749744 485.98162812525
+147 0.0180044372547491 476.261995562745 0.018371874749744 485.98162812525
+148 0.0181269164197474 479.50187308358 0.018371874749744 485.98162812525
+149 0.0182493955847457 482.741750604415 0.018371874749744 485.98162812525
+150 0.018371874749744 485.98162812525 0.018371874749744 485.98162812525</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes
+/tmp/ipykernel_4680/4218495784.py:18: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  scan_df[photon] = solution.fluxes</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/noahsprent\.github\.io\/mmon-gcm");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./1.5_convert_horrer_starch_level.html" class="pagination-link" aria-label="Starch amount estimation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Starch amount estimation</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./2.2_analysingsolutions.html" class="pagination-link" aria-label="Analysing solutions">
+        <span class="nav-page-text">Analysing solutions</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

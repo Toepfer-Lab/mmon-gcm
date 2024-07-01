@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>mmon-gcm - Calculating line widths for flux maps</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./3.1_generate_constraints_df.html" rel="next">
+<link href="./2.2_analysingsolutions.html" rel="prev">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="mmon-gcm - Calculating line widths for flux maps">
+<meta property="og:description" content="Repo for MMON-gcm">
+<meta property="og:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta property="og:site_name" content="mmon-gcm">
+<meta name="twitter:title" content="mmon-gcm - Calculating line widths for flux maps">
+<meta name="twitter:description" content="Repo for MMON-gcm">
+<meta name="twitter:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">mmon-gcm</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1_solvingmodel.html">Solving and analysing specific scenarios for paper</a></li><li class="breadcrumb-item"><a href="./2.3_flux_map_values.html">Calculating line widths for flux maps</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./logo.svg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MMON-GCM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Building model and defining parameters</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.0_generating_linkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generating table for linkers/osmolytes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.1_buildingmodel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Building model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.2_defining_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Finding parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.3_atpase_constraint.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is H+ATPase limiting?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">1.4_flutschconcentrations.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.5_convert_horrer_starch_level.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Starch amount estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Solving and analysing specific scenarios for paper</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.1_solvingmodel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solving guard cell models for different parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.2_analysingsolutions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing solutions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.3_flux_map_values.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Calculating line widths for flux maps</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Running constraints scan</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.1_generate_constraints_df.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Constraint scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.2_run_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Constraint Scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.3_analyse_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing the results of the constraint scan</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Running and analysing alternative flux modes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">4.1_generate_alternative_flux_modes_matrix.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.2_run_alternative_flux_modes.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.3_analyse_alternative_flux_modes.ipynb</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+ <span class="menu-text">prep_plant_cell.ipynb</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/alternativemodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">alternativemodes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/analysing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/buildingediting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">buildingediting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/constraintscan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">constraintscan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/osmolyteconstraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">osmolyteconstraints</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/solving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">solving</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#for-the-key" id="toc-for-the-key" class="nav-link active" data-scroll-target="#for-the-key">For the key:</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1_solvingmodel.html">Solving and analysing specific scenarios for paper</a></li><li class="breadcrumb-item"><a href="./2.3_flux_map_values.html">Calculating line widths for flux maps</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Calculating line widths for flux maps</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>For this, rather than taking values from solutions the values are inputted manually from the escher maps. It would be better from the solution dfs but I don’t fancy coding this at the moment…</p>
+<div id="8ba2e77f-133e-4d97-8764-2222bb95a1a4" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="90b03964-a4c4-4aac-a9d4-aeb5cca0c2b2" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>conditions_permutations <span class="op">=</span> [</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"blue"</span>, <span class="st">"white"</span>, <span class="st">"nops"</span>],</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"unconstrained"</span>, <span class="st">"constrained"</span>],</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"wt"</span>, <span class="st">"starchko"</span>],</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"fluxes"</span>, <span class="st">"minimum"</span>, <span class="st">"maximum"</span>],</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>solutions_df_columns <span class="op">=</span> pd.MultiIndex.from_product(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    conditions_permutations, names<span class="op">=</span>[<span class="st">"Light"</span>, <span class="st">"ATPase"</span>, <span class="st">"Starch"</span>, <span class="st">"Solution"</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>solutions_df <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>solutions_df_columns)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>conditions_list_of_lists <span class="op">=</span> [</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"blue"</span>, <span class="st">"white"</span>, <span class="st">"nops"</span>],</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"unconstrained"</span>, <span class="st">"constrained"</span>],</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"wt"</span>, <span class="st">"starchko"</span>],</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>conditions_iterations <span class="op">=</span> <span class="bu">list</span>(itertools.product(<span class="op">*</span>conditions_list_of_lists))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>cols_to_drop <span class="op">=</span> []</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> conditions <span class="kw">in</span> conditions_iterations:</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    light_condition, atpase_condition, starch_condition <span class="op">=</span> conditions</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    file_name <span class="op">=</span> <span class="ss">f"../outputs/model_solutions/</span><span class="sc">{</span>light_condition<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>atpase_condition<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>starch_condition<span class="sc">}</span><span class="ss">.csv"</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        condition_df <span class="op">=</span> pd.read_csv(file_name, index_col<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> col <span class="kw">in</span> [<span class="st">"fluxes"</span>, <span class="st">"minimum"</span>, <span class="st">"maximum"</span>]:</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            solutions_df.loc[</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                :, (light_condition, atpase_condition, starch_condition, col)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            ] <span class="op">=</span> condition_df.loc[:, col]</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span>:</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        cols_to_drop.append(conditions)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"File </span><span class="sc">{</span>file_name<span class="sc">}</span><span class="ss"> doesn't exist, skipping"</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>solutions_df_unphased <span class="op">=</span> solutions_df.copy()</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>index_phased <span class="op">=</span> pd.MultiIndex.from_tuples(</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        (reaction[:<span class="op">-</span><span class="dv">2</span>], <span class="bu">int</span>(reaction[<span class="op">-</span><span class="dv">1</span>]))</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> reaction[<span class="op">-</span><span class="dv">1</span>] <span class="kw">in</span> [<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>]</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> (reaction, <span class="va">None</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> reaction <span class="kw">in</span> solutions_df.index</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    names<span class="op">=</span>[<span class="st">"Reaction"</span>, <span class="st">"Phase"</span>],</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>solutions_df.index <span class="op">=</span> index_phased</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>solutions_df <span class="op">=</span> solutions_df.drop(cols_to_drop, axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[
+/tmp/ipykernel_4834/2276567288.py:27: DeprecationWarning: In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
+  solutions_df.loc[</code></pre>
+</div>
+</div>
+<div id="e71b9b5a-c6f3-4fbd-a1a2-62c6184c155e" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>solutions_df <span class="op">=</span> solutions_df.xs(<span class="st">"fluxes"</span>, level<span class="op">=</span><span class="st">"Solution"</span>, axis<span class="op">=</span><span class="dv">1</span>).xs(<span class="dv">2</span>, level<span class="op">=</span><span class="st">"Phase"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="211b263c" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>solutions_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Light</th>
+<th colspan="4" data-quarto-table-cell-role="th" data-halign="left">blue</th>
+<th colspan="4" data-quarto-table-cell-role="th" data-halign="left">white</th>
+<th colspan="4" data-quarto-table-cell-role="th" data-halign="left">nops</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ATPase</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">unconstrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">constrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">unconstrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">constrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">unconstrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">constrained</th>
+</tr>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Starch</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Reaction</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">EX_X_pi_t_me</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">EX_X_pi_t_gc</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">EX_X_CO2_t_me</td>
+<td>4.128357</td>
+<td>4.128357e+00</td>
+<td>4.128356e+00</td>
+<td>4.128355</td>
+<td>-5.388402e+01</td>
+<td>-53.884016</td>
+<td>-53.884016</td>
+<td>-5.388402e+01</td>
+<td>-53.884046</td>
+<td>-53.884046</td>
+<td>-53.884048</td>
+<td>-53.884048</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">EX_X_CO2_t_gc</td>
+<td>0.003663</td>
+<td>4.036220e-03</td>
+<td>2.176874e-03</td>
+<td>0.001631</td>
+<td>1.156296e-03</td>
+<td>0.001168</td>
+<td>-0.001087</td>
+<td>-1.371060e-03</td>
+<td>0.002922</td>
+<td>0.002922</td>
+<td>0.001837</td>
+<td>0.002173</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">EX_X_Mg_t_me</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">MAL_total_pseudolinker</td>
+<td>0.004445</td>
+<td>4.525811e-03</td>
+<td>2.358282e-03</td>
+<td>0.001766</td>
+<td>4.455754e-03</td>
+<td>0.004487</td>
+<td>0.000000</td>
+<td>-6.494415e-10</td>
+<td>0.002314</td>
+<td>0.002314</td>
+<td>0.000918</td>
+<td>0.002355</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">FRU_total_pseudolinker</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>1.737018e-03</td>
+<td>0.006863</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.001898</td>
+<td>6.805909e-03</td>
+<td>0.000347</td>
+<td>0.000347</td>
+<td>0.004141</td>
+<td>0.006863</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">K_total_pseudolinker</td>
+<td>0.013250</td>
+<td>1.303211e-02</td>
+<td>9.057052e-03</td>
+<td>0.005820</td>
+<td>1.292071e-02</td>
+<td>0.012970</td>
+<td>0.005393</td>
+<td>4.495170e-03</td>
+<td>0.009849</td>
+<td>0.009849</td>
+<td>0.006187</td>
+<td>0.005980</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Cl_total_pseudolinker</td>
+<td>0.011572</td>
+<td>1.303197e-02</td>
+<td>7.424397e-03</td>
+<td>0.004597</td>
+<td>1.292071e-02</td>
+<td>0.012970</td>
+<td>0.005393</td>
+<td>4.495170e-03</td>
+<td>0.008247</td>
+<td>0.008247</td>
+<td>0.004350</td>
+<td>0.004350</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">CIT_total_pseudolinker</td>
+<td>0.000000</td>
+<td>4.690523e-08</td>
+<td>-4.632768e-10</td>
+<td>0.000000</td>
+<td>-2.844564e-18</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+</tbody>
+</table>
+
+<p>1774 rows × 12 columns</p>
+</div>
+</div>
+</div>
+<div id="8aee3812-d63e-4560-980f-31a646cd29d2" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>reaction_dict <span class="op">=</span> {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"starch_to_glc"</span>: <span class="st">"RXN_1827_p_gc_2"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"starch_to_mal"</span>: <span class="st">"MALTODEG_RXN_c_gc_2"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#"starch_to_glc_mal": "MALTODEG_RXN_c_gc_2",</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mal_deg"</span>: <span class="st">"MALIC_NAD_RXN_m_gc_2"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mal_v_c"</span>: <span class="st">"MAL_vc_gc_2"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ps_to_suc"</span>: <span class="st">"SUCROSE_PHOSPHATE_SYNTHASE_RXN_c_gc_2"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#"ps_to_glc": "GLUC1PURIDYLTRANS_RXN_c_gc_2",</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#"cit_to_mal": "FUMHYDR_RXN_m_gc_2",</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cit_to_mal"</span>: <span class="st">"SUCCCOASYN_RXN_m_gc_2"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"suc_c_v"</span>: <span class="st">"SUCROSE_PROTON_cv_gc_2"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"suc_v_deg"</span>: <span class="st">"RXN_1461_v_gc_2"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"suc_c_deg"</span>: <span class="st">"RXN_1461_c_gc_2"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"suc_to_fru"</span>: <span class="st">"SUCROSE_SYNTHASE_RXN_c_gc_2"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cit_to_acon"</span>: <span class="st">"ACONITATEDEHYDR_RXN_c_gc_2"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cit_synth"</span>: <span class="st">"CITSYN_RXN_m_gc_2"</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d8cdeb0a-8afe-4c09-b0d4-e7c7b36ff218" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>flux_dict <span class="op">=</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"blue"</span>: {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unconstrained"</span>: {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">"wt"</span>: <span class="bu">dict</span>(reaction_dict),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"starchko"</span>: <span class="bu">dict</span>(reaction_dict)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"constrained"</span>: {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"wt"</span>: <span class="bu">dict</span>(reaction_dict),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"starchko"</span>: <span class="bu">dict</span>(reaction_dict)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"white"</span>: {</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"constrained"</span>: {</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"wt"</span>: <span class="bu">dict</span>(reaction_dict),</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">"starchko"</span>: <span class="bu">dict</span>(reaction_dict)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nops"</span>: {</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"constrained"</span>: {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"wt"</span>: <span class="bu">dict</span>(reaction_dict),</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"starchko"</span>: <span class="bu">dict</span>(reaction_dict)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b817002b-2bc4-4b82-bf73-5b3c150a903d" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>conditions_list_of_lists <span class="op">=</span> [</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"blue"</span>, <span class="st">"white"</span>, <span class="st">"nops"</span>],</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"unconstrained"</span>, <span class="st">"constrained"</span>],</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"wt"</span>, <span class="st">"starchko"</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>conditions_iterations <span class="op">=</span> <span class="bu">list</span>(itertools.product(<span class="op">*</span>conditions_list_of_lists))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="54256560" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>solutions_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Light</th>
+<th colspan="4" data-quarto-table-cell-role="th" data-halign="left">blue</th>
+<th colspan="4" data-quarto-table-cell-role="th" data-halign="left">white</th>
+<th colspan="4" data-quarto-table-cell-role="th" data-halign="left">nops</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ATPase</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">unconstrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">constrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">unconstrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">constrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">unconstrained</th>
+<th colspan="2" data-quarto-table-cell-role="th" data-halign="left">constrained</th>
+</tr>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Starch</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+<th data-quarto-table-cell-role="th">wt</th>
+<th data-quarto-table-cell-role="th">starchko</th>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Reaction</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">EX_X_pi_t_me</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">EX_X_pi_t_gc</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">EX_X_CO2_t_me</td>
+<td>4.128357</td>
+<td>4.128357e+00</td>
+<td>4.128356e+00</td>
+<td>4.128355</td>
+<td>-5.388402e+01</td>
+<td>-53.884016</td>
+<td>-53.884016</td>
+<td>-5.388402e+01</td>
+<td>-53.884046</td>
+<td>-53.884046</td>
+<td>-53.884048</td>
+<td>-53.884048</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">EX_X_CO2_t_gc</td>
+<td>0.003663</td>
+<td>4.036220e-03</td>
+<td>2.176874e-03</td>
+<td>0.001631</td>
+<td>1.156296e-03</td>
+<td>0.001168</td>
+<td>-0.001087</td>
+<td>-1.371060e-03</td>
+<td>0.002922</td>
+<td>0.002922</td>
+<td>0.001837</td>
+<td>0.002173</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">EX_X_Mg_t_me</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">MAL_total_pseudolinker</td>
+<td>0.004445</td>
+<td>4.525811e-03</td>
+<td>2.358282e-03</td>
+<td>0.001766</td>
+<td>4.455754e-03</td>
+<td>0.004487</td>
+<td>0.000000</td>
+<td>-6.494415e-10</td>
+<td>0.002314</td>
+<td>0.002314</td>
+<td>0.000918</td>
+<td>0.002355</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">FRU_total_pseudolinker</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>1.737018e-03</td>
+<td>0.006863</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.001898</td>
+<td>6.805909e-03</td>
+<td>0.000347</td>
+<td>0.000347</td>
+<td>0.004141</td>
+<td>0.006863</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">K_total_pseudolinker</td>
+<td>0.013250</td>
+<td>1.303211e-02</td>
+<td>9.057052e-03</td>
+<td>0.005820</td>
+<td>1.292071e-02</td>
+<td>0.012970</td>
+<td>0.005393</td>
+<td>4.495170e-03</td>
+<td>0.009849</td>
+<td>0.009849</td>
+<td>0.006187</td>
+<td>0.005980</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Cl_total_pseudolinker</td>
+<td>0.011572</td>
+<td>1.303197e-02</td>
+<td>7.424397e-03</td>
+<td>0.004597</td>
+<td>1.292071e-02</td>
+<td>0.012970</td>
+<td>0.005393</td>
+<td>4.495170e-03</td>
+<td>0.008247</td>
+<td>0.008247</td>
+<td>0.004350</td>
+<td>0.004350</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">CIT_total_pseudolinker</td>
+<td>0.000000</td>
+<td>4.690523e-08</td>
+<td>-4.632768e-10</td>
+<td>0.000000</td>
+<td>-2.844564e-18</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000e+00</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+</tbody>
+</table>
+
+<p>1774 rows × 12 columns</p>
+</div>
+</div>
+</div>
+<div id="ab00c72c-54be-4bdf-90d8-872e2129625e" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> light, light_dict <span class="kw">in</span> flux_dict.items():</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> atpase, atpase_dict <span class="kw">in</span> light_dict.items():</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> starch, starch_dict <span class="kw">in</span> atpase_dict.items():</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shorthand, reaction_name <span class="kw">in</span> starch_dict.items():</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                flux <span class="op">=</span> solutions_df.loc[reaction_name[:<span class="op">-</span><span class="dv">2</span>],(light, atpase, starch)]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="bu">abs</span>(flux) <span class="op">&lt;</span> <span class="fl">1e-8</span>:</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                    flux <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                flux_dict[light][atpase][starch][shorthand] <span class="op">=</span> flux</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="eadc275c-dd8e-4d96-9935-705878d45c36" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>solutions_df.loc[<span class="st">"GLUC1PURIDYLTRANS_RXN_c_gc"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>Light  ATPase         Starch  
+blue   unconstrained  wt          1.190563e-04
+                      starchko    1.960967e-04
+       constrained    wt         -4.632788e-10
+                      starchko    2.462117e-12
+white  unconstrained  wt          4.278484e-04
+                      starchko    4.304933e-04
+       constrained    wt         -9.054699e-04
+                      starchko    1.142550e-04
+nops   unconstrained  wt         -1.310427e-04
+                      starchko   -1.310166e-04
+       constrained    wt          0.000000e+00
+                      starchko    0.000000e+00
+Name: GLUC1PURIDYLTRANS_RXN_c_gc, dtype: float64</code></pre>
+</div>
+</div>
+<div id="0b0052c9-6a58-456d-8ec8-6d7bb45bb28f" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>flux_dict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>{'blue': {'unconstrained': {'wt': {'starch_to_glc': 0,
+    'starch_to_mal': 0,
+    'mal_deg': 0,
+    'mal_v_c': 0.0084862683952195,
+    'ps_to_suc': 0.0001190562980565,
+    'cit_to_mal': 0.0013558713124941,
+    'suc_c_v': 0,
+    'suc_v_deg': 0,
+    'suc_c_deg': 0,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0.0013558713124941,
+    'cit_synth': 0.000237558821619},
+   'starchko': {'starch_to_glc': 0,
+    'starch_to_mal': 0,
+    'mal_deg': 0.0006650467732122,
+    'mal_v_c': 0.010648966832743,
+    'ps_to_suc': 0.0001960966512218,
+    'cit_to_mal': 0.0008129115147968,
+    'suc_c_v': 0,
+    'suc_v_deg': 0,
+    'suc_c_deg': 0,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0,
+    'cit_synth': 0.0008130053252513}},
+  'constrained': {'wt': {'starch_to_glc': 0.0051260186331311,
+    'starch_to_mal': 0,
+    'mal_deg': 0,
+    'mal_v_c': 0.0036281277404994,
+    'ps_to_suc': 0,
+    'cit_to_mal': 0.0010884364690379,
+    'suc_c_v': 0,
+    'suc_v_deg': 0.0034740356910968,
+    'suc_c_deg': 0,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0.0010884373955896,
+    'cit_synth': 0},
+   'starchko': {'starch_to_glc': 0,
+    'starch_to_mal': 0,
+    'mal_deg': 0,
+    'mal_v_c': 0.0027176388646845,
+    'ps_to_suc': 0,
+    'cit_to_mal': 0.0008152916495569,
+    'suc_c_v': 0,
+    'suc_v_deg': 0.013726072962268,
+    'suc_c_deg': 0,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0.0008152916544811,
+    'cit_synth': 0}}},
+ 'white': {'constrained': {'wt': {'starch_to_glc': 0.0054174157446452,
+    'starch_to_mal': 0,
+    'mal_deg': 0,
+    'mal_v_c': 0,
+    'ps_to_suc': 0.0010865638814297,
+    'cit_to_mal': 0,
+    'suc_c_v': 0,
+    'suc_v_deg': 0.0018046775864697,
+    'suc_c_deg': 0,
+    'suc_to_fru': 0.0019920337826212,
+    'cit_to_acon': 0,
+    'cit_synth': 0},
+   'starchko': {'starch_to_glc': 0,
+    'starch_to_mal': 0,
+    'mal_deg': 0,
+    'mal_v_c': 0,
+    'ps_to_suc': 0.0001142549771026,
+    'cit_to_mal': 0,
+    'suc_c_v': 0,
+    'suc_v_deg': 0.0136118179802412,
+    'suc_c_deg': 0,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0,
+    'cit_synth': 0}}},
+ 'nops': {'constrained': {'wt': {'starch_to_glc': 0.0025691232468596,
+    'starch_to_mal': 0.0003061234489482,
+    'mal_deg': 0,
+    'mal_v_c': 0,
+    'ps_to_suc': 0,
+    'cit_to_mal': 0.0012244940670225,
+    'suc_c_v': 0.0029878403954816,
+    'suc_v_deg': 0.0029878403954816,
+    'suc_c_deg': 0.0052938626191942,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0.0012244937957926,
+    'cit_synth': 0},
+   'starchko': {'starch_to_glc': 0,
+    'starch_to_mal': 0,
+    'mal_deg': 0,
+    'mal_v_c': 0.003622478194246,
+    'ps_to_suc': 0,
+    'cit_to_mal': 0.0010867432486121,
+    'suc_c_v': 0.0061093909571672,
+    'suc_v_deg': 0.0096469801196154,
+    'suc_c_deg': 0.0040790928377284,
+    'suc_to_fru': 0,
+    'cit_to_acon': 0.0010867432486121,
+    'cit_synth': 0}}}}</code></pre>
+</div>
+</div>
+<div id="d8154e1f-8101-4d7d-a8f2-18fe06a4120a" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sigfig <span class="im">import</span> <span class="bu">round</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6c3c27df-8921-48a1-b304-16ecb361501a" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> NestedDictValues(d):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> v <span class="kw">in</span> d.values():</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">isinstance</span>(v, <span class="bu">dict</span>):</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> <span class="cf">from</span> NestedDictValues(v)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b7d2ca55-e394-4209-8781-07ef3caa5f02" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>min_flux <span class="op">=</span> np.array(<span class="bu">list</span>(NestedDictValues(flux_dict))).<span class="bu">min</span>()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>min_flux</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>0.0</code></pre>
+</div>
+</div>
+<div id="0602a319-30c5-40dd-851e-15c18bcfbd9c" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>max_flux <span class="op">=</span> np.array(<span class="bu">list</span>(NestedDictValues(flux_dict))).<span class="bu">max</span>()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>max_flux</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>0.013726072962268</code></pre>
+</div>
+</div>
+<div id="4e4d7fab-a228-4d93-91ab-eba1f32d8930" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>max_flux<span class="op">/</span>min_flux</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4834/4031404064.py:1: RuntimeWarning: divide by zero encountered in scalar divide
+  max_flux/min_flux</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>inf</code></pre>
+</div>
+</div>
+<p>So we have a 50-fold difference between the smallest and largest flux. 5mm in the inkscape figures that I’ve created is probably the max I can do, so 0.1 is the minimum.</p>
+<p>Inkscape will only do widths to nearest 0.01mm I think, but allows you to input 3 numbers after the dp.</p>
+<div id="e0458f26-512d-4577-95f0-fdd59e8c6f9b" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> convert_fluxes_to_widths_linear(flux):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    max_width_in_inkscape <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    conversion <span class="op">=</span> max_width_in_inkscape<span class="op">/</span>max_flux</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    new_flux <span class="op">=</span> conversion<span class="op">*</span>flux</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    new_flux_rounded <span class="op">=</span> <span class="bu">round</span>(new_flux, <span class="dv">3</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_flux_rounded</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="11bbbe06-62e2-4997-b423-2c67e6af1ea1" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7b744e1e-3041-4dcf-8687-0e5ab583a5b5" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="fl">0.0001</span>, <span class="fl">0.014</span>, <span class="fl">0.0001</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> [convert_fluxes_to_widths_linear(flux) <span class="cf">for</span> flux <span class="kw">in</span> x]</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2.3_flux_map_values_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="9e33423a-bcf8-4826-802e-2c391286bcb2" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> copy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f4e42df7-ffbb-4c2c-af41-beec261f28d3" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> convert_flux_dict(flux_dict):</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    converted_dict <span class="op">=</span> copy.deepcopy(flux_dict)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> light_value, light_dict <span class="kw">in</span> flux_dict.items():</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> atpase_constraint, atpase_dict <span class="kw">in</span> light_dict.items():</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> phenotype, phenotype_dict <span class="kw">in</span> atpase_dict.items():</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> reaction, reaction_value <span class="kw">in</span> phenotype_dict.items():</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                    converted_dict[light_value][atpase_constraint][phenotype][reaction] <span class="op">=</span> convert_fluxes_to_widths_linear(</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                        reaction_value)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> converted_dict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c0c7d858-158e-42f3-b949-d6f8d576d5ad" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>converted_dict <span class="op">=</span> convert_flux_dict(flux_dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/maurice/miniconda3/envs/mmon-gcm/lib/python3.9/site-packages/sigfig/sigfig.py:586: UserWarning: warning: 3 significant figures requested from number with only 1 significant figures
+  warn("warning: %d significant figures requested from number with only %d significant figures" % (given['sigfigs'], len(num.map)))
+/home/maurice/miniconda3/envs/mmon-gcm/lib/python3.9/site-packages/sigfig/sigfig.py:586: UserWarning: warning: 3 significant figures requested from number with only 2 significant figures
+  warn("warning: %d significant figures requested from number with only %d significant figures" % (given['sigfigs'], len(num.map)))</code></pre>
+</div>
+</div>
+<div id="1686cca3-d947-4641-aa77-374eccf37735" class="cell" data-scrolled="true" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> light, light_dict <span class="kw">in</span> converted_dict.items():</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> atpase, atpase_dict <span class="kw">in</span> light_dict.items():</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> starch, starch_dict <span class="kw">in</span> atpase_dict.items():</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>light<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>atpase<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>starch<span class="sc">}</span><span class="ss">:"</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> shorthand, mm <span class="kw">in</span> starch_dict.items():</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> mm <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>                    <span class="co">#print(f"{shorthand} should be {mm}mm wide")</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>shorthand<span class="sc">}</span><span class="ss"> should be </span><span class="sc">{</span>mm<span class="op">*</span><span class="dv">175</span><span class="sc">}</span><span class="ss">%"</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>blue_unconstrained_wt:
+mal_v_c should be 540.75%
+ps_to_suc should be 7.595%
+cit_to_mal should be 86.45%
+cit_to_acon should be 86.45%
+cit_synth should be 15.1375%
+
+
+blue_unconstrained_starchko:
+mal_deg should be 42.35%
+mal_v_c should be 679.0%
+ps_to_suc should be 12.495000000000001%
+cit_to_mal should be 51.8%
+cit_synth should be 51.8%
+
+
+blue_constrained_wt:
+starch_to_glc should be 327.25%
+mal_v_c should be 231.0%
+cit_to_mal should be 69.3%
+suc_v_deg should be 222.25%
+cit_to_acon should be 69.3%
+
+
+blue_constrained_starchko:
+mal_v_c should be 173.25%
+cit_to_mal should be 51.974999999999994%
+suc_v_deg should be 875.0%
+cit_to_acon should be 51.974999999999994%
+
+
+white_constrained_wt:
+starch_to_glc should be 344.75%
+ps_to_suc should be 69.3%
+suc_v_deg should be 114.97500000000001%
+suc_to_fru should be 127.05%
+
+
+white_constrained_starchko:
+ps_to_suc should be 7.279999999999999%
+suc_v_deg should be 868.0%
+
+
+nops_constrained_wt:
+starch_to_glc should be 163.8%
+starch_to_mal should be 19.6%
+cit_to_mal should be 78.05%
+suc_c_v should be 190.75%
+suc_v_deg should be 190.75%
+suc_c_deg should be 337.75%
+cit_to_acon should be 78.05%
+
+
+nops_constrained_starchko:
+mal_v_c should be 231.0%
+cit_to_mal should be 69.3%
+suc_c_v should be 390.25%
+suc_v_deg should be 614.25%
+suc_c_deg should be 260.75%
+cit_to_acon should be 69.3%
+
+</code></pre>
+</div>
+</div>
+<section id="for-the-key" class="level2">
+<h2 class="anchored" data-anchor-id="for-the-key">For the key:</h2>
+<div id="9f6c79d7-01c0-4740-a8b5-fbe691f2c934" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cobra</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mmon_gcm.supermodel <span class="im">import</span> SuperModel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="02997128-40c7-4ade-aec8-c3285d9a6ffe" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>parameters_df <span class="op">=</span> pd.read_csv(<span class="st">"../inputs/arabidopsis_parameters.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>four_stage_GC_model <span class="op">=</span> cobra.io.sbml.read_sbml_model(<span class="st">"../models/4_stage_GC.xml"</span>)  <span class="co"># read model</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel <span class="op">=</span> SuperModel(parameters_df.loc[:, <span class="st">"Value"</span>], fba_model<span class="op">=</span>four_stage_GC_model)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No objective coefficients in model. Unclear what should be optimized</code></pre>
+</div>
+</div>
+<div id="6f408c27-035a-4f7a-a817-2921c54e2ac6" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>arabidopsis_supermodel.N_gcs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>580000000.0</code></pre>
+</div>
+</div>
+<div id="82797da9-cbdf-49e6-885c-c8405a348955" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fl">0.01</span><span class="op">/</span>arabidopsis_supermodel.N_gcs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<pre><code>1.724137931034483e-11</code></pre>
+</div>
+</div>
+<div id="0b3d8f0c-0628-45dc-92e3-35507dfba5a1" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>moles_gc_h <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> <span class="dv">10</span> <span class="op">**</span> <span class="op">-</span><span class="dv">15</span>  <span class="co"># fmolesgc-1h-1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c1474e01-fe39-436d-b6f5-3fd07496781f" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>moles_m2_h <span class="op">=</span> moles_gc_h<span class="op">*</span>arabidopsis_supermodel.N_gcs  <span class="co"># molesh-1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7cc08957-e4ed-4186-bba8-3a5178e3fbc5" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>mmoles_m2_h <span class="op">=</span> moles_m2_h <span class="op">*</span> <span class="dv">10</span> <span class="op">**</span> <span class="dv">3</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>mmoles_m2_h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<pre><code>0.005800000000000001</code></pre>
+</div>
+</div>
+<div id="aff46c17-99b7-4851-8b4e-45f8c1391cab" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ss">f"</span><span class="sc">{</span>convert_fluxes_to_widths_linear(mmoles_m2_h)<span class="sc">}</span><span class="ss">mm for a flux of 10 fmoles gc-1 h-1"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="31">
+<pre><code>'2.11mm for a flux of 10 fmoles gc-1 h-1'</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/noahsprent\.github\.io\/mmon-gcm");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./2.2_analysingsolutions.html" class="pagination-link" aria-label="Analysing solutions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Analysing solutions</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./3.1_generate_constraints_df.html" class="pagination-link" aria-label="Constraint scan">
+        <span class="nav-page-text">Constraint scan</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

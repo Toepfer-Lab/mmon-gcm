@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="This is the code that is used to build the 4-phase integrated guard cell and mesophyll cell model from the original core plant model">
+
+<title>mmon-gcm - Building model</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./1.2_defining_parameters.html" rel="next">
+<link href="./1.0_generating_linkers.html" rel="prev">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="mmon-gcm - Building model">
+<meta property="og:description" content="This is the code that is used to build the 4-phase integrated guard cell and mesophyll cell model from the original core plant model">
+<meta property="og:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta property="og:site_name" content="mmon-gcm">
+<meta name="twitter:title" content="mmon-gcm - Building model">
+<meta name="twitter:description" content="This is the code that is used to build the 4-phase integrated guard cell and mesophyll cell model from the original core plant model">
+<meta name="twitter:image" content="https://noahsprent.github.io/mmon-gcm/logo.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">mmon-gcm</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./1.0_generating_linkers.html">Building model and defining parameters</a></li><li class="breadcrumb-item"><a href="./1.1_buildingmodel.html">Building model</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./logo.svg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MMON-GCM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Building model and defining parameters</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.0_generating_linkers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generating table for linkers/osmolytes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.1_buildingmodel.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Building model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.2_defining_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Finding parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.3_atpase_constraint.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is H+ATPase limiting?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">1.4_flutschconcentrations.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1.5_convert_horrer_starch_level.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Starch amount estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Solving and analysing specific scenarios for paper</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.1_solvingmodel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solving guard cell models for different parameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.2_analysingsolutions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing solutions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.3_flux_map_values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Calculating line widths for flux maps</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Running constraints scan</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.1_generate_constraints_df.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Constraint scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.2_run_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Constraint Scan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.3_analyse_constraint_scan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing the results of the constraint scan</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Running and analysing alternative flux modes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">4.1_generate_alternative_flux_modes_matrix.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.2_run_alternative_flux_modes.ipynb</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">4.3_analyse_alternative_flux_modes.ipynb</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+ <span class="menu-text">prep_plant_cell.ipynb</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/alternativemodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">alternativemodes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/analysing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/buildingediting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">buildingediting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/constraintscan.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">constraintscan</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/osmolyteconstraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">osmolyteconstraints</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions/solving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">solving</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#set-up" id="toc-set-up" class="nav-link active" data-scroll-target="#set-up">Set up</a></li>
+  <li><a href="#add-charge-to-model" id="toc-add-charge-to-model" class="nav-link" data-scroll-target="#add-charge-to-model">Add charge to model</a></li>
+  <li><a href="#changes-to-both-cells" id="toc-changes-to-both-cells" class="nav-link" data-scroll-target="#changes-to-both-cells">Changes to Both Cells</a>
+  <ul class="collapse">
+  <li><a href="#k" id="toc-k" class="nav-link" data-scroll-target="#k">K+</a></li>
+  <li><a href="#cl-" id="toc-cl-" class="nav-link" data-scroll-target="#cl-">Cl-</a></li>
+  <li><a href="#cit" id="toc-cit" class="nav-link" data-scroll-target="#cit">CIT</a></li>
+  <li><a href="#mal" id="toc-mal" class="nav-link" data-scroll-target="#mal">MAL</a></li>
+  <li><a href="#mal-anion-export-channel-clmal" id="toc-mal-anion-export-channel-clmal" class="nav-link" data-scroll-target="#mal-anion-export-channel-clmal">MAL Anion Export Channel (Cl/Mal)</a></li>
+  <li><a href="#nadphox" id="toc-nadphox" class="nav-link" data-scroll-target="#nadphox">NADPHox</a></li>
+  <li><a href="#remove-reactions-only-active-in-germinating-seeds" id="toc-remove-reactions-only-active-in-germinating-seeds" class="nav-link" data-scroll-target="#remove-reactions-only-active-in-germinating-seeds">Remove reactions only active in germinating seeds</a></li>
+  <li><a href="#setting-disproportionating-enzyme-irreversible-in-the-direction-of-maltose-degradation" id="toc-setting-disproportionating-enzyme-irreversible-in-the-direction-of-maltose-degradation" class="nav-link" data-scroll-target="#setting-disproportionating-enzyme-irreversible-in-the-direction-of-maltose-degradation">Setting disproportionating enzyme irreversible in the direction of maltose degradation</a></li>
+  </ul></li>
+  <li><a href="#split-model-into-mesophyll-me-and-guard-cell-gc" id="toc-split-model-into-mesophyll-me-and-guard-cell-gc" class="nav-link" data-scroll-target="#split-model-into-mesophyll-me-and-guard-cell-gc">Split Model into Mesophyll (me) and Guard Cell (gc)</a></li>
+  <li><a href="#adding-gc-specific-transporters" id="toc-adding-gc-specific-transporters" class="nav-link" data-scroll-target="#adding-gc-specific-transporters">Adding GC-specific transporters</a>
+  <ul class="collapse">
+  <li><a href="#inward-rectifying-k-channel" id="toc-inward-rectifying-k-channel" class="nav-link" data-scroll-target="#inward-rectifying-k-channel">Inward-rectifying K+ Channel</a></li>
+  <li><a href="#outward-rectifying-k-channel" id="toc-outward-rectifying-k-channel" class="nav-link" data-scroll-target="#outward-rectifying-k-channel">Outward-rectifying K+ Channel</a></li>
+  <li><a href="#h-coupled-k-symport" id="toc-h-coupled-k-symport" class="nav-link" data-scroll-target="#h-coupled-k-symport">H+-coupled K+ Symport</a></li>
+  <li><a href="#cl--import-channel" id="toc-cl--import-channel" class="nav-link" data-scroll-target="#cl--import-channel">Cl- Import Channel</a></li>
+  <li><a href="#h-coupled-cl--symport" id="toc-h-coupled-cl--symport" class="nav-link" data-scroll-target="#h-coupled-cl--symport">H+-Coupled Cl- Symport</a></li>
+  <li><a href="#cl--anion-export-channel-clmal" id="toc-cl--anion-export-channel-clmal" class="nav-link" data-scroll-target="#cl--anion-export-channel-clmal">Cl- Anion Export Channel (Cl/Mal)</a></li>
+  <li><a href="#atpase-malate-importer" id="toc-atpase-malate-importer" class="nav-link" data-scroll-target="#atpase-malate-importer">ATPase Malate Importer</a></li>
+  <li><a href="#glucose-apoplastic-symport-channel" id="toc-glucose-apoplastic-symport-channel" class="nav-link" data-scroll-target="#glucose-apoplastic-symport-channel">Glucose Apoplastic Symport Channel</a></li>
+  <li><a href="#glucose-exporter" id="toc-glucose-exporter" class="nav-link" data-scroll-target="#glucose-exporter">Glucose Exporter</a></li>
+  <li><a href="#sucrose-apoplastic-symport-channel" id="toc-sucrose-apoplastic-symport-channel" class="nav-link" data-scroll-target="#sucrose-apoplastic-symport-channel">Sucrose Apoplastic Symport Channel</a></li>
+  <li><a href="#sucrose-exporter" id="toc-sucrose-exporter" class="nav-link" data-scroll-target="#sucrose-exporter">Sucrose Exporter</a></li>
+  <li><a href="#fructose-apoplastic-symport-channel" id="toc-fructose-apoplastic-symport-channel" class="nav-link" data-scroll-target="#fructose-apoplastic-symport-channel">Fructose Apoplastic Symport Channel</a></li>
+  <li><a href="#fructose-exporter" id="toc-fructose-exporter" class="nav-link" data-scroll-target="#fructose-exporter">Fructose Exporter</a></li>
+  <li><a href="#cell-wall-invertase" id="toc-cell-wall-invertase" class="nav-link" data-scroll-target="#cell-wall-invertase">Cell-Wall Invertase</a></li>
+  <li><a href="#k-import-channel" id="toc-k-import-channel" class="nav-link" data-scroll-target="#k-import-channel">K+ Import Channel</a></li>
+  <li><a href="#nhx-type-kh-antiport" id="toc-nhx-type-kh-antiport" class="nav-link" data-scroll-target="#nhx-type-kh-antiport">NHX-Type K+/H+ Antiport</a></li>
+  <li><a href="#k-tonoplastic-export-channel" id="toc-k-tonoplastic-export-channel" class="nav-link" data-scroll-target="#k-tonoplastic-export-channel">K+ Tonoplastic Export Channel</a></li>
+  <li><a href="#clc-type-cl-h-antiport-vacoular-import-channel" id="toc-clc-type-cl-h-antiport-vacoular-import-channel" class="nav-link" data-scroll-target="#clc-type-cl-h-antiport-vacoular-import-channel">CLC-Type Cl-/H+ Antiport Vacoular Import Channel</a></li>
+  <li><a href="#vcl-cl--vacuolar-import-channel" id="toc-vcl-cl--vacuolar-import-channel" class="nav-link" data-scroll-target="#vcl-cl--vacuolar-import-channel">VCL Cl- Vacuolar Import Channel</a></li>
+  <li><a href="#cl--vacuolar-export-channel" id="toc-cl--vacuolar-export-channel" class="nav-link" data-scroll-target="#cl--vacuolar-export-channel">Cl- Vacuolar Export Channel</a></li>
+  <li><a href="#mal-import-channel-amlt" id="toc-mal-import-channel-amlt" class="nav-link" data-scroll-target="#mal-import-channel-amlt">MAL Import Channel (AMLT)</a></li>
+  <li><a href="#mal-export-channel-amlt" id="toc-mal-export-channel-amlt" class="nav-link" data-scroll-target="#mal-export-channel-amlt">MAL Export Channel (AMLT)</a></li>
+  <li><a href="#mal-export-symporter" id="toc-mal-export-symporter" class="nav-link" data-scroll-target="#mal-export-symporter">MAL Export Symporter</a></li>
+  <li><a href="#fructose-import-antiporter" id="toc-fructose-import-antiporter" class="nav-link" data-scroll-target="#fructose-import-antiporter">Fructose Import Antiporter</a></li>
+  <li><a href="#fructose-import-symporter" id="toc-fructose-import-symporter" class="nav-link" data-scroll-target="#fructose-import-symporter">Fructose Import Symporter</a></li>
+  <li><a href="#fructose-export" id="toc-fructose-export" class="nav-link" data-scroll-target="#fructose-export">Fructose Export</a></li>
+  <li><a href="#glucose-tonoplastic-antiporter" id="toc-glucose-tonoplastic-antiporter" class="nav-link" data-scroll-target="#glucose-tonoplastic-antiporter">Glucose Tonoplastic Antiporter</a></li>
+  <li><a href="#glucose-tonoplastic-symporter" id="toc-glucose-tonoplastic-symporter" class="nav-link" data-scroll-target="#glucose-tonoplastic-symporter">Glucose Tonoplastic Symporter</a></li>
+  <li><a href="#glucose-export-channel" id="toc-glucose-export-channel" class="nav-link" data-scroll-target="#glucose-export-channel">Glucose Export Channel</a></li>
+  <li><a href="#sucrose-tonoplastic-importer" id="toc-sucrose-tonoplastic-importer" class="nav-link" data-scroll-target="#sucrose-tonoplastic-importer">Sucrose Tonoplastic Importer</a></li>
+  <li><a href="#sucrose-tonoplastic-import-antiporter" id="toc-sucrose-tonoplastic-import-antiporter" class="nav-link" data-scroll-target="#sucrose-tonoplastic-import-antiporter">Sucrose Tonoplastic Import Antiporter</a></li>
+  <li><a href="#sucrose-tonoplastic-export-symporter" id="toc-sucrose-tonoplastic-export-symporter" class="nav-link" data-scroll-target="#sucrose-tonoplastic-export-symporter">Sucrose Tonoplastic Export Symporter</a></li>
+  <li><a href="#tonoplastic-ppase" id="toc-tonoplastic-ppase" class="nav-link" data-scroll-target="#tonoplastic-ppase">Tonoplastic PPase</a></li>
+  <li><a href="#tonoplastic-h-atpase" id="toc-tonoplastic-h-atpase" class="nav-link" data-scroll-target="#tonoplastic-h-atpase">Tonoplastic H+ ATPase</a></li>
+  </ul></li>
+  <li><a href="#constrain-channels-in-guard-cell" id="toc-constrain-channels-in-guard-cell" class="nav-link" data-scroll-target="#constrain-channels-in-guard-cell">Constrain Channels in Guard Cell</a></li>
+  <li><a href="#adding-apoplast-and-exchanges" id="toc-adding-apoplast-and-exchanges" class="nav-link" data-scroll-target="#adding-apoplast-and-exchanges">Adding apoplast and exchanges</a>
+  <ul class="collapse">
+  <li><a href="#removing-tx_me" id="toc-removing-tx_me" class="nav-link" data-scroll-target="#removing-tx_me">Removing tx_me</a></li>
+  <li><a href="#removing-tx_gc" id="toc-removing-tx_gc" class="nav-link" data-scroll-target="#removing-tx_gc">Removing tx_gc</a></li>
+  <li><a href="#adding-tx-to-apo-and-adding-exchanges" id="toc-adding-tx-to-apo-and-adding-exchanges" class="nav-link" data-scroll-target="#adding-tx-to-apo-and-adding-exchanges">Adding tx to apo and adding exchanges</a></li>
+  <li><a href="#list-of-all-boundary-reactions" id="toc-list-of-all-boundary-reactions" class="nav-link" data-scroll-target="#list-of-all-boundary-reactions">List of all boundary reactions:</a></li>
+  </ul></li>
+  <li><a href="#constrain-free-exchange-and-starch-breakdown" id="toc-constrain-free-exchange-and-starch-breakdown" class="nav-link" data-scroll-target="#constrain-free-exchange-and-starch-breakdown">Constrain free exchange and starch breakdown</a></li>
+  <li><a href="#quadruple-model-into-4-phases" id="toc-quadruple-model-into-4-phases" class="nav-link" data-scroll-target="#quadruple-model-into-4-phases">Quadruple model into 4 phases</a></li>
+  <li><a href="#add-linker-reactions-with-pseudometabolites-osmolarity-and-charge" id="toc-add-linker-reactions-with-pseudometabolites-osmolarity-and-charge" class="nav-link" data-scroll-target="#add-linker-reactions-with-pseudometabolites-osmolarity-and-charge">Add Linker Reactions With Pseudometabolites (Osmolarity and Charge)</a></li>
+  <li><a href="#add-maintenance-reactions" id="toc-add-maintenance-reactions" class="nav-link" data-scroll-target="#add-maintenance-reactions">Add Maintenance Reactions</a></li>
+  <li><a href="#add-phloem_tx-overall" id="toc-add-phloem_tx-overall" class="nav-link" data-scroll-target="#add-phloem_tx-overall">Add Phloem_tx Overall</a></li>
+  <li><a href="#add-pseudoreactions-for-total-metabolite-counting-and-fva" id="toc-add-pseudoreactions-for-total-metabolite-counting-and-fva" class="nav-link" data-scroll-target="#add-pseudoreactions-for-total-metabolite-counting-and-fva">Add pseudoreactions for total metabolite counting and FVA</a></li>
+  <li><a href="#export-model" id="toc-export-model" class="nav-link" data-scroll-target="#export-model">Export Model</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./1.0_generating_linkers.html">Building model and defining parameters</a></li><li class="breadcrumb-item"><a href="./1.1_buildingmodel.html">Building model</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Building model</h1>
+</div>
+
+<div>
+  <div class="description">
+    This is the code that is used to build the 4-phase integrated guard cell and mesophyll cell model from the original core plant model
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="set-up" class="level2">
+<h2 class="anchored" data-anchor-id="set-up">Set up</h2>
+<div id="cell-3" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cobra</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mmon_gcm.buildingediting <span class="im">import</span> (</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    add_linkers,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    add_metabolite,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    add_metabolites_to_reaction_multi,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    add_reaction,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    check_number_of_models,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    set_bounds_multi,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    split_model,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-5" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> cobra.io.read_sbml_model(<span class="st">"../models/PlantCoreMetabolism_v1_2_2_3fbc.xml"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No objective coefficients in model. Unclear what should be optimized</code></pre>
+</div>
+</div>
+</section>
+<section id="add-charge-to-model" class="level2">
+<h2 class="anchored" data-anchor-id="add-charge-to-model">Add charge to model</h2>
+<div id="cell-7" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>charges <span class="op">=</span> pd.read_csv(<span class="st">"../inputs/charges.csv"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>charges.set_index(<span class="st">"Metabolite"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, row <span class="kw">in</span> charges.iterrows():</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    model.metabolites.get_by_id(row[<span class="dv">1</span>]).charge <span class="op">=</span> row[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="changes-to-both-cells" class="level2">
+<h2 class="anchored" data-anchor-id="changes-to-both-cells">Changes to Both Cells</h2>
+<section id="k" class="level3">
+<h3 class="anchored" data-anchor-id="k">K+</h3>
+<div id="cell-10" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metabolite <span class="kw">in</span> model.metabolites:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"KI_"</span> <span class="kw">in</span> metabolite.<span class="bu">id</span>:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        metabolite.<span class="bu">id</span> <span class="op">=</span> metabolite.<span class="bu">id</span>[:<span class="dv">1</span>] <span class="op">+</span> metabolite.<span class="bu">id</span>[<span class="op">-</span><span class="dv">2</span>:]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        metabolite.name <span class="op">=</span> metabolite.<span class="bu">id</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>model.reactions.K_rev_vc.name <span class="op">=</span> <span class="st">"K_cv"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>model.reactions.K_rev_vc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"K_cv"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>model.metabolites.K_e.charge <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cl-" class="level3">
+<h3 class="anchored" data-anchor-id="cl-">Cl-</h3>
+<div id="cell-12" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"Cl_e"</span>, <span class="st">"e"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"Cl_c"</span>, <span class="st">"c"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"Cl_v"</span>, <span class="st">"v"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>model.metabolites.Cl_e.notes <span class="op">=</span> {<span class="st">"INCHI"</span>: [<span class="st">"InChI=1S/ClH/h1H/p-1"</span>], <span class="st">"SMILES"</span>: [<span class="st">"Cl-"</span>]}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>model.metabolites.Cl_e.charge <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>model.metabolites.Cl_c.notes <span class="op">=</span> model.metabolites.Cl_e.notes.copy()</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>model.metabolites.Cl_c.charge <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>model.metabolites.Cl_v.notes <span class="op">=</span> model.metabolites.Cl_e.notes.copy()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>model.metabolites.Cl_v.charge <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Cl_tx"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_tx.add_metabolites({<span class="st">"Cl_e"</span>: <span class="dv">1</span>})</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_tx.lower_bound <span class="op">=</span> <span class="op">-</span><span class="dv">1000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cit" class="level3">
+<h3 class="anchored" data-anchor-id="cit">CIT</h3>
+<div id="cell-14" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metabolite <span class="kw">in</span> model.metabolites:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"CIT_"</span> <span class="kw">in</span> metabolite.<span class="bu">id</span> <span class="kw">and</span> <span class="st">"aCIT"</span> <span class="kw">not</span> <span class="kw">in</span> metabolite.<span class="bu">id</span>:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        metabolite.charge <span class="op">=</span> <span class="op">-</span><span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-15" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model.metabolites.aCIT_v.charge <span class="op">=</span> <span class="op">-</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="mal" class="level3">
+<h3 class="anchored" data-anchor-id="mal">MAL</h3>
+<div id="cell-17" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metabolite <span class="kw">in</span> model.metabolites:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"MAL_"</span> <span class="kw">in</span> metabolite.<span class="bu">id</span> <span class="kw">and</span> <span class="st">"aMAL"</span> <span class="kw">not</span> <span class="kw">in</span> metabolite.<span class="bu">id</span>:</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        metabolite.charge <span class="op">=</span> <span class="op">-</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-18" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model.metabolites.aMAL_v.charge <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-19" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"MAL_e"</span>, <span class="st">"e"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"aMAL_e"</span>, <span class="st">"e"</span>, multi<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd">
+<td><strong>Metabolite identifier</strong></td>
+<td>aMAL_e</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>aMAL_e</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0687d07f40</td>
+</tr>
+<tr class="even">
+<td><strong>Formula</strong></td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<td><strong>Compartment</strong></td>
+<td>e</td>
+</tr>
+<tr class="even">
+<td><strong>In 0 reaction(s)</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="cell-20" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model.metabolites.MAL_e.notes <span class="op">=</span> model.metabolites.MAL_v.notes.copy()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>model.metabolites.aMAL_e.notes <span class="op">=</span> model.metabolites.aMAL_v.notes.copy()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>model.metabolites.MAL_e.charge <span class="op">=</span> model.metabolites.MAL_v.charge</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>model.metabolites.aMAL_e.charge <span class="op">=</span> model.metabolites.aMAL_v.charge</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-21" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"MAL_tx"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_tx.add_metabolites(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAL_e"</span>: <span class="fl">0.7</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"aMAL_e"</span>: <span class="fl">0.3</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_tx.lower_bound <span class="op">=</span> <span class="op">-</span><span class="dv">1000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="mal-anion-export-channel-clmal" class="level3">
+<h3 class="anchored" data-anchor-id="mal-anion-export-channel-clmal">MAL Anion Export Channel (Cl/Mal)</h3>
+<div id="cell-23" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"MAL_ce"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_ce.name <span class="op">=</span> <span class="st">"MAL R/S-Type Anion Channel"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_ce.add_metabolites(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"MAL_c"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"MAL_e"</span>: <span class="fl">0.7</span>, <span class="st">"aMAL_e"</span>: <span class="fl">0.3</span>, <span class="st">"PROTON_e"</span>: <span class="op">-</span><span class="fl">0.3</span>}</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="nadphox" class="level3">
+<h3 class="anchored" data-anchor-id="nadphox">NADPHox</h3>
+<div id="cell-25" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change names to make consistent with the rest of the model</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> model.reactions:</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"NADPHox"</span> <span class="kw">in</span> reaction.<span class="bu">id</span>:</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        reaction.name <span class="op">=</span> reaction.<span class="bu">id</span>[:<span class="dv">7</span>] <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> reaction.<span class="bu">id</span>[<span class="dv">7</span>:]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        reaction.<span class="bu">id</span> <span class="op">=</span> reaction.<span class="bu">id</span>[:<span class="dv">7</span>] <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> reaction.<span class="bu">id</span>[<span class="dv">7</span>:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="remove-reactions-only-active-in-germinating-seeds" class="level3">
+<h3 class="anchored" data-anchor-id="remove-reactions-only-active-in-germinating-seeds">Remove reactions only active in germinating seeds</h3>
+<p>Arabidopsis Peroxisomal Citrate Synthase Is Required for Fatty Acid Respiration and Seed Germination Itsara Pracharoenwattana, Johanna E. Cornah, Steven M. Smith The Plant Cell Jul 2005, 17 (7) 2037-2048; DOI: 10.1105/tpc.105.031856</p>
+<p>Coordinate expression of transcriptionally regulated isocitrate lyase and malate synthase genes in Brassica napus L. L Comai, R A Dietrich, D J Maslyar, C S Baden, J J Harada The Plant Cell Mar 1989, 1 (3) 293-300; DOI: 10.1105/tpc.1.3.293</p>
+<div id="cell-28" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model.reactions.MALSYN_RXN_x.bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>model.reactions.CITSYN_RXN_x.bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="setting-disproportionating-enzyme-irreversible-in-the-direction-of-maltose-degradation" class="level3">
+<h3 class="anchored" data-anchor-id="setting-disproportionating-enzyme-irreversible-in-the-direction-of-maltose-degradation">Setting disproportionating enzyme irreversible in the direction of maltose degradation</h3>
+<p>Critchley, J.H., Zeeman, S.C., Takaha, T., Smith, A.M. and Smith, S.M. (2001), A critical role for disproportionating enzyme in starch breakdown is revealed by a knock-out mutation in Arabidopsis. The Plant Journal, 26: 89-100. https://doi.org/10.1046/j.1365-313x.2001.01012.x</p>
+<div id="cell-31" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model.reactions.MALTODEG_RXN_c.bounds <span class="op">=</span> <span class="dv">0</span>, cobra.Configuration().upper_bound</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="split-model-into-mesophyll-me-and-guard-cell-gc" class="level2">
+<h2 class="anchored" data-anchor-id="split-model-into-mesophyll-me-and-guard-cell-gc">Split Model into Mesophyll (me) and Guard Cell (gc)</h2>
+<p>Use<a href="https://noahsprent.github.io/mmon-gcm/functions/buildingediting.html#split_model"><code>split_model</code></a> to duplicate the model and add the tags “me” and “gc” to each one</p>
+<div id="cell-34" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>split_model(model, [<span class="st">"me"</span>, <span class="st">"gc"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/maurice/miniconda3/envs/mmon-gcm/lib/python3.9/site-packages/cobra/core/group.py:147: UserWarning: need to pass in a list
+  warn("need to pass in a list")</code></pre>
+</div>
+</div>
+</section>
+<section id="adding-gc-specific-transporters" class="level2">
+<h2 class="anchored" data-anchor-id="adding-gc-specific-transporters">Adding GC-specific transporters</h2>
+<div id="cell-36" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTON_ATPase_c_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>PROTON_ATPase_c_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>PROTON_ATPase_c_gc</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686ad35b0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>0.65 ATP_c_gc + 0.45 PROTON_c_gc + WATER_c_gc + 0.35 aATP_c_gc --&gt; 0.5 ADP_c_gc + PROTON_e_gc + 0.7 Pi_c_gc + 0.5 aADP_c_gc + 0.3 aPi_c_gc</p>
+<p>0.65 ATP_gc + 0.45 PROTON_gc + WATER_gc + 0.35 aATP[c]_gc --&gt; 0.5 ADP_gc + PROTON_gc + 0.7 Pi[c]_gc + 0.5 aADP[c]_gc + 0.3 aPi[c]_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+<section id="inward-rectifying-k-channel" class="level3">
+<h3 class="anchored" data-anchor-id="inward-rectifying-k-channel">Inward-rectifying K+ Channel</h3>
+<section id="remove-dependence-for-protons" class="level4">
+<h4 class="anchored" data-anchor-id="remove-dependence-for-protons">Remove dependence for protons</h4>
+<div id="cell-39" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>model.reactions.K_ec_gc.name <span class="op">=</span> <span class="st">"Apoplastic Inward-Rectifying K+ Channel"</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>model.reactions.K_ec_gc.add_metabolites({<span class="st">"PROTON_e_gc"</span>: <span class="dv">1</span>, <span class="st">"PROTON_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-40" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>model.reactions.K_ec_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>K_ec_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>Apoplastic Inward-Rectifying K+ Channel</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686b12bb0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>K_e_gc --&gt; K_c_gc</p>
+<p>K_e_gc --&gt; K_c_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+</section>
+<section id="outward-rectifying-k-channel" class="level3">
+<h3 class="anchored" data-anchor-id="outward-rectifying-k-channel">Outward-rectifying K+ Channel</h3>
+<div id="cell-42" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"K_ce_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>model.reactions.K_ce_gc.name <span class="op">=</span> <span class="st">"Apoplastic Outward-Rectifying K+ Channel"</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>model.reactions.K_ce_gc.add_metabolites({<span class="st">"K_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"K_e_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="h-coupled-k-symport" class="level3">
+<h3 class="anchored" data-anchor-id="h-coupled-k-symport">H+-coupled K+ Symport</h3>
+<div id="cell-44" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"K_PROTON_ec_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>model.reactions.K_PROTON_ec_gc.name <span class="op">=</span> <span class="st">"H+-Coupled K+ Symport"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>model.reactions.K_PROTON_ec_gc.add_metabolites(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"K_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"K_c_gc"</span>: <span class="dv">1</span>, <span class="st">"PROTON_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"PROTON_c_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>model.reactions.K_PROTON_ec_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>K_PROTON_ec_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>H+-Coupled K+ Symport</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0687d43760</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>K_e_gc + PROTON_e_gc --&gt; K_c_gc + PROTON_c_gc</p>
+<p>K_e_gc + PROTON_gc --&gt; K_c_gc + PROTON_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="cl--import-channel" class="level3">
+<h3 class="anchored" data-anchor-id="cl--import-channel">Cl- Import Channel</h3>
+<div id="cell-46" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Cl_ec_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_ec_gc.name <span class="op">=</span> <span class="st">"Cl Apoplastic Import Channel"</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_ec_gc.add_metabolites({<span class="st">"Cl_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"Cl_c_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="h-coupled-cl--symport" class="level3">
+<h3 class="anchored" data-anchor-id="h-coupled-cl--symport">H+-Coupled Cl- Symport</h3>
+<div id="cell-48" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Cl_PROTON_ec_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_PROTON_ec_gc.name <span class="op">=</span> <span class="st">"H+-Coupled Cl- Symport"</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_PROTON_ec_gc.add_metabolites(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"Cl_e_gc"</span>: <span class="op">-</span><span class="dv">2</span>, <span class="st">"Cl_c_gc"</span>: <span class="dv">2</span>, <span class="st">"PROTON_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"PROTON_c_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cl--anion-export-channel-clmal" class="level3">
+<h3 class="anchored" data-anchor-id="cl--anion-export-channel-clmal">Cl- Anion Export Channel (Cl/Mal)</h3>
+<div id="cell-50" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Cl_ce_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_ce_gc.name <span class="op">=</span> <span class="st">"Cl- R/S-Type Anion Channel"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_ce_gc.add_metabolites({<span class="st">"Cl_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"Cl_e_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="atpase-malate-importer" class="level3">
+<h3 class="anchored" data-anchor-id="atpase-malate-importer">ATPase Malate Importer</h3>
+<div id="cell-52" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"MAL_ATPASE_ec_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_ATPASE_ec_gc.add_metabolites(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAL_e_gc"</span>: <span class="op">-</span><span class="fl">0.7</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"aMAL_e_gc"</span>: <span class="op">-</span><span class="fl">0.3</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAL_c_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ATP_c_gc"</span>: <span class="op">-</span><span class="fl">0.65</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"aATP_c_gc"</span>: <span class="op">-</span><span class="fl">0.35</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"WATER_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ADP_c_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Pi_c_gc"</span>: <span class="fl">0.7</span>,</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"aPi_c_gc"</span>: <span class="fl">0.3</span>,</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_c_gc"</span>: <span class="op">+</span><span class="fl">0.85</span>,</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="glucose-apoplastic-symport-channel" class="level3">
+<h3 class="anchored" data-anchor-id="glucose-apoplastic-symport-channel">Glucose Apoplastic Symport Channel</h3>
+<div id="cell-54" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_ec_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"GLC_PROTON_ec_gc"</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_ec_gc.name <span class="op">=</span> <span class="st">"H+-Coupled Glucose Symport"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_ec_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="28">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>GLC_PROTON_ec_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>H+-Coupled Glucose Symport</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686c9c8e0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>GLC_e_gc + PROTON_e_gc --&gt; GLC_c_gc + PROTON_c_gc</p>
+<p>GLC_gc + PROTON_gc --&gt; GLC_gc + PROTON_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="glucose-exporter" class="level3">
+<h3 class="anchored" data-anchor-id="glucose-exporter">Glucose Exporter</h3>
+<div id="cell-56" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"GLC_ce_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_ce_gc.name <span class="op">=</span> <span class="st">"Glucose Apoplastic Exporter"</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_ce_gc.add_metabolites({<span class="st">"GLC_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"GLC_e_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sucrose-apoplastic-symport-channel" class="level3">
+<h3 class="anchored" data-anchor-id="sucrose-apoplastic-symport-channel">Sucrose Apoplastic Symport Channel</h3>
+<div id="cell-58" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Renaming Sucrose_tx</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Sucrose_tx_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"SUCROSE_tx_gc"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-59" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>model.reactions.Sucrose_ec_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"SUCROSE_PROTON_ec_gc"</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_ec_gc.name <span class="op">=</span> <span class="st">"H+-Coupled Sucrose Symport"</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_ec_gc.upper_bound <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_ec_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="31">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>SUCROSE_PROTON_ec_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>H+-Coupled Sucrose Symport</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e06869a2cd0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>PROTON_e_gc + SUCROSE_e_gc --&gt; PROTON_c_gc + SUCROSE_c_gc</p>
+<p>PROTON_gc + SUCROSE_gc --&gt; PROTON_gc + SUCROSE_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="sucrose-exporter" class="level3">
+<h3 class="anchored" data-anchor-id="sucrose-exporter">Sucrose Exporter</h3>
+<div id="cell-61" class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"SUCROSE_ce_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_ce_gc.name <span class="op">=</span> <span class="st">"Sucrose Apoplastic Exporter"</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_ce_gc.add_metabolites({<span class="st">"SUCROSE_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"SUCROSE_e_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fructose-apoplastic-symport-channel" class="level3">
+<h3 class="anchored" data-anchor-id="fructose-apoplastic-symport-channel">Fructose Apoplastic Symport Channel</h3>
+<div id="cell-63" class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"FRU_e_gc"</span>, <span class="st">"e"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>model.metabolites.FRU_e_gc.notes <span class="op">=</span> model.metabolites.FRU_c_gc.notes.copy()</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>model.metabolites.FRU_e_gc.charge <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-64" class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"FRU_PROTON_ec_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_ec_gc.name <span class="op">=</span> <span class="st">"H+-Coupled Fructose Symport"</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_ec_gc.add_metabolites(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"FRU_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"FRU_c_gc"</span>: <span class="dv">1</span>, <span class="st">"PROTON_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"PROTON_c_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fructose-exporter" class="level3">
+<h3 class="anchored" data-anchor-id="fructose-exporter">Fructose Exporter</h3>
+<div id="cell-66" class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"FRU_ce_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_ce_gc.name <span class="op">=</span> <span class="st">"Fructose Apoplastic Exporter"</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_ce_gc.add_metabolites({<span class="st">"FRU_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"FRU_e_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cell-wall-invertase" class="level3">
+<h3 class="anchored" data-anchor-id="cell-wall-invertase">Cell-Wall Invertase</h3>
+<div id="cell-68" class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"cwINV_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>cwINV_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>cwINV_gc</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0687d43a60</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>--&gt;</p>
+<p>--&gt;</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+<div id="cell-69" class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>model.reactions.cwINV_gc.add_metabolites(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"SUCROSE_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"WATER_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"FRU_e_gc"</span>: <span class="dv">1</span>, <span class="st">"GLC_e_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="k-import-channel" class="level3">
+<h3 class="anchored" data-anchor-id="k-import-channel">K+ Import Channel</h3>
+<p>(TPK-Type and Fast-vacuolar)</p>
+<div id="cell-71" class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>model.reactions.K_cv_gc.name <span class="op">=</span> <span class="st">"K+ Tonoplastic Import Channel"</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>model.reactions.K_cv_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="38">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>K_cv_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>K+ Tonoplastic Import Channel</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686aa7dc0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>K_c_gc + PROTON_v_gc --&gt; K_v_gc + PROTON_c_gc</p>
+<p>K_c_gc + PROTON_gc --&gt; K_v_gc + PROTON_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="nhx-type-kh-antiport" class="level3">
+<h3 class="anchored" data-anchor-id="nhx-type-kh-antiport">NHX-Type K+/H+ Antiport</h3>
+<div id="cell-73" class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"K_PROTON_cv_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>model.reactions.K_PROTON_cv_gc.name <span class="op">=</span> <span class="st">"NHX-Type K+/H+ Antiport"</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>model.reactions.K_PROTON_cv_gc.add_metabolites(</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"K_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"K_v_gc"</span>: <span class="dv">1</span>, <span class="st">"PROTON_v_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"PROTON_c_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="k-tonoplastic-export-channel" class="level3">
+<h3 class="anchored" data-anchor-id="k-tonoplastic-export-channel">K+ Tonoplastic Export Channel</h3>
+<p>Slow Vacuolar Channel</p>
+<div id="cell-75" class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"K_vc_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>model.reactions.K_vc_gc.name <span class="op">=</span> <span class="st">"K+ Tonoplastic Export Slow Vacuolar Channel"</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>model.reactions.K_vc_gc.add_metabolites({<span class="st">"K_v_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"K_c_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="clc-type-cl-h-antiport-vacoular-import-channel" class="level3">
+<h3 class="anchored" data-anchor-id="clc-type-cl-h-antiport-vacoular-import-channel">CLC-Type Cl-/H+ Antiport Vacoular Import Channel</h3>
+<div id="cell-77" class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Cl_PROTON_cv_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_PROTON_cv_gc.name <span class="op">=</span> (</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CLC-Type Cl-/H+ Antiport Vacoular Import Channel"</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_PROTON_cv_gc.add_metabolites(</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Cl_v_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Cl_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_c_gc"</span>: <span class="dv">2</span>,</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_v_gc"</span>: <span class="op">-</span><span class="dv">2</span>,</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="vcl-cl--vacuolar-import-channel" class="level3">
+<h3 class="anchored" data-anchor-id="vcl-cl--vacuolar-import-channel">VCL Cl- Vacuolar Import Channel</h3>
+<div id="cell-79" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Cl_cv_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_cv_gc.name <span class="op">=</span> <span class="st">"VCL Cl- Vacuolar Import Channel"</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_cv_gc.add_metabolites({<span class="st">"Cl_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"Cl_v_gc"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cl--vacuolar-export-channel" class="level3">
+<h3 class="anchored" data-anchor-id="cl--vacuolar-export-channel">Cl- Vacuolar Export Channel</h3>
+<div id="cell-81" class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>model.reactions.Cl_cv_gc.lower_bound <span class="op">=</span> <span class="op">-</span><span class="dv">1000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="mal-import-channel-amlt" class="level3">
+<h3 class="anchored" data-anchor-id="mal-import-channel-amlt">MAL Import Channel (AMLT)</h3>
+<div id="cell-83" class="cell" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_PROTON_vc_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"MAL_cv_gc"</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_cv_gc.name <span class="op">=</span> <span class="st">"VMAL-type MAL Channel (Import)"</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_cv_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>MAL_cv_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>VMAL-type MAL Channel (Import)</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686ab9190</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>MAL_c_gc + 0.3 PROTON_v_gc --&gt; 0.7 MAL_v_gc + 0.3 aMAL_v_gc</p>
+<p>MAL_gc + 0.3 PROTON_gc --&gt; 0.7 MAL_gc + 0.3 aMAL[v]_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="mal-export-channel-amlt" class="level3">
+<h3 class="anchored" data-anchor-id="mal-export-channel-amlt">MAL Export Channel (AMLT)</h3>
+<div id="cell-85" class="cell" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"MAL_vc_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_vc_gc.name <span class="op">=</span> <span class="st">"VMAL-type MAL Channel (Export)"</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_vc_gc.add_metabolites(</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAL_v_gc"</span>: <span class="op">-</span><span class="fl">0.7</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"aMAL_v_gc"</span>: <span class="op">-</span><span class="fl">0.3</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAL_c_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_c_gc"</span>: <span class="fl">0.3</span>,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="mal-export-symporter" class="level3">
+<h3 class="anchored" data-anchor-id="mal-export-symporter">MAL Export Symporter</h3>
+<p>Already in Model</p>
+<div id="cell-87" class="cell" data-execution_count="46">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_PROTON_rev_vc_gc.name <span class="op">=</span> <span class="st">"MAL Export Symporter"</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>model.reactions.MAL_PROTON_rev_vc_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="46">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>MAL_PROTON_rev_vc_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>MAL Export Symporter</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e068696ca90</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>0.7 MAL_v_gc + 1.7 PROTON_v_gc + 0.3 aMAL_v_gc --&gt; MAL_c_gc + 2.0 PROTON_c_gc</p>
+<p>0.7 MAL_gc + 1.7 PROTON_gc + 0.3 aMAL[v]_gc --&gt; MAL_gc + 2.0 PROTON_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="fructose-import-antiporter" class="level3">
+<h3 class="anchored" data-anchor-id="fructose-import-antiporter">Fructose Import Antiporter</h3>
+<p>Previously in the model</p>
+<div id="cell-89" class="cell" data-execution_count="47">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_rev_vc_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"FRU_PROTON_rev_cv_gc"</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_rev_cv_gc.name <span class="op">=</span> <span class="st">"Fructose Tonoplastic Import Antiporter"</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_rev_cv_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="47">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>FRU_PROTON_rev_cv_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>Fructose Tonoplastic Import Antiporter</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686ea8fa0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>FRU_c_gc + PROTON_v_gc --&gt; FRU_v_gc + PROTON_c_gc</p>
+<p>FRU[c]_gc + PROTON_gc --&gt; FRU[v]_gc + PROTON_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="fructose-import-symporter" class="level3">
+<h3 class="anchored" data-anchor-id="fructose-import-symporter">Fructose Import Symporter</h3>
+<div id="cell-91" class="cell" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"FRU_PROTON_cv_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_cv_gc.name <span class="op">=</span> <span class="st">"Fructose Tonoplastic Import Symporter"</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_PROTON_cv_gc.add_metabolites(</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"PROTON_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"PROTON_v_gc"</span>: <span class="dv">1</span>, <span class="st">"FRU_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"FRU_v_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fructose-export" class="level3">
+<h3 class="anchored" data-anchor-id="fructose-export">Fructose Export</h3>
+<div id="cell-93" class="cell" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>model.reactions.FRU_vc_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="49">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>FRU_vc_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>FRU_vc_gc</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686b245e0</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>FRU_v_gc --&gt; FRU_c_gc</p>
+<p>FRU[v]_gc --&gt; FRU[c]_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="glucose-tonoplastic-antiporter" class="level3">
+<h3 class="anchored" data-anchor-id="glucose-tonoplastic-antiporter">Glucose Tonoplastic Antiporter</h3>
+<div id="cell-95" class="cell" data-execution_count="50">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_rev_vc_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"GLC_PROTON_rev_cv_gc"</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_rev_cv_gc.name <span class="op">=</span> <span class="st">"Glucose Tonoplastic Import Antiporter"</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_rev_cv_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="50">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>GLC_PROTON_rev_cv_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>Glucose Tonoplastic Import Antiporter</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686d1de50</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>GLC_c_gc + PROTON_v_gc --&gt; GLC_v_gc + PROTON_c_gc</p>
+<p>GLC_gc + PROTON_gc --&gt; GLC_gc + PROTON_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="glucose-tonoplastic-symporter" class="level3">
+<h3 class="anchored" data-anchor-id="glucose-tonoplastic-symporter">Glucose Tonoplastic Symporter</h3>
+<div id="cell-97" class="cell" data-execution_count="51">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"GLC_PROTON_cv_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_cv_gc.name <span class="op">=</span> <span class="st">"Glucose Tonoplastic Import Symporter"</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_PROTON_cv_gc.add_metabolites(</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"PROTON_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"PROTON_v_gc"</span>: <span class="dv">1</span>, <span class="st">"GLC_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"GLC_v_gc"</span>: <span class="dv">1</span>}</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="glucose-export-channel" class="level3">
+<h3 class="anchored" data-anchor-id="glucose-export-channel">Glucose Export Channel</h3>
+<div id="cell-99" class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>model.reactions.GLC_vc_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="52">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>GLC_vc_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>GLC_vc_gc</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686a9df70</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>GLC_v_gc --&gt; GLC_c_gc</p>
+<p>GLC_gc --&gt; GLC_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="sucrose-tonoplastic-importer" class="level3">
+<h3 class="anchored" data-anchor-id="sucrose-tonoplastic-importer">Sucrose Tonoplastic Importer</h3>
+<div id="cell-101" class="cell" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"SUCROSE_cv_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_cv_gc.name <span class="op">=</span> <span class="st">"Sucrose Free Tonoplastic Import"</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_cv_gc.add_metabolites(</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SUCROSE_c_gc"</span>: <span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SUCROSE_v_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sucrose-tonoplastic-import-antiporter" class="level3">
+<h3 class="anchored" data-anchor-id="sucrose-tonoplastic-import-antiporter">Sucrose Tonoplastic Import Antiporter</h3>
+<p>Already in the model</p>
+<div id="cell-103" class="cell" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_vc_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"SUCROSE_PROTON_cv_gc"</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_cv_gc.name <span class="op">=</span> <span class="st">"Sucrose Tonoplastic Import Antiporter"</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_cv_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="54">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>SUCROSE_PROTON_cv_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>Sucrose Tonoplastic Import Antiporter</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686f28d30</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>PROTON_v_gc + SUCROSE_c_gc --&gt; PROTON_c_gc + SUCROSE_v_gc</p>
+<p>PROTON_gc + SUCROSE_gc --&gt; PROTON_gc + SUCROSE_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="sucrose-tonoplastic-export-symporter" class="level3">
+<h3 class="anchored" data-anchor-id="sucrose-tonoplastic-export-symporter">Sucrose Tonoplastic Export Symporter</h3>
+<div id="cell-105" class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_rev_vc_gc.<span class="bu">id</span> <span class="op">=</span> <span class="st">"SUCROSE_PROTON_vc_gc"</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>model.reactions.SUCROSE_PROTON_vc_gc.name <span class="op">=</span> <span class="st">"Sucrose Tonoplastic Export Symporter"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="tonoplastic-ppase" class="level3">
+<h3 class="anchored" data-anchor-id="tonoplastic-ppase">Tonoplastic PPase</h3>
+<div id="cell-107" class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTON_PPi_rev_vc_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="56">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>PROTON_PPi_rev_vc_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>PROTON_PPi_rev_vc_gc</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e06869e5670</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>0.65 PPI_c_gc + 0.25 PROTON_c_gc + WATER_c_gc + 0.35 aPPI_c_gc --&gt; PROTON_v_gc + 1.4 Pi_c_gc + 0.6 aPi_c_gc</p>
+<p>0.65 PPI_gc + 0.25 PROTON_gc + WATER_gc + 0.35 aPPI[c]_gc --&gt; PROTON_gc + 1.4 Pi[c]_gc + 0.6 aPi[c]_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+</section>
+<section id="tonoplastic-h-atpase" class="level3">
+<h3 class="anchored" data-anchor-id="tonoplastic-h-atpase">Tonoplastic H+ ATPase</h3>
+<div id="cell-109" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTONATP_rev_vc_gc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="57">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Reaction identifier</strong></td>
+<td>PROTONATP_rev_vc_gc</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>PROTONATP_rev_vc_gc</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0686febb20</td>
+</tr>
+<tr class="even">
+<td><strong>Stoichiometry</strong></td>
+<td><p>0.65 ATP_c_gc + 1.45 PROTON_c_gc + WATER_c_gc + 0.35 aATP_c_gc --&gt; 0.5 ADP_c_gc + 2.0 PROTON_v_gc + 0.7 Pi_c_gc + 0.5 aADP_c_gc + 0.3 aPi_c_gc</p>
+<p>0.65 ATP_gc + 1.45 PROTON_gc + WATER_gc + 0.35 aATP[c]_gc --&gt; 0.5 ADP_gc + 2.0 PROTON_gc + 0.7 Pi[c]_gc + 0.5 aADP[c]_gc + 0.3 aPi[c]_gc</p></td>
+</tr>
+<tr class="odd">
+<td><strong>GPR</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Lower bound</strong></td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td><strong>Upper bound</strong></td>
+<td>1000.0</td>
+</tr>
+</tbody>
+</table>
+
+        
+</div>
+</div>
+<div id="cell-110" class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"PROTON_ec_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTON_ec_gc.name <span class="op">=</span> <span class="st">"Plasma membrane proton leakage"</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTON_ec_gc.add_metabolites(</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_e_gc"</span>: <span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_c_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-111" class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"PROTON_vc_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTON_vc_gc.name <span class="op">=</span> <span class="st">"Tonoplast membrane proton leakage"</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>model.reactions.PROTON_vc_gc.add_metabolites(</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_v_gc"</span>: <span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROTON_c_gc"</span>: <span class="dv">1</span>,</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="constrain-channels-in-guard-cell" class="level2">
+<h2 class="anchored" data-anchor-id="constrain-channels-in-guard-cell">Constrain Channels in Guard Cell</h2>
+<div id="cell-113" class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> channel <span class="kw">in</span> [<span class="st">"Cl_ec"</span>, <span class="st">"K_cv"</span>, <span class="st">"FRU_PROTON_cv"</span>, <span class="st">"GLC_PROTON_cv"</span>, <span class="st">"SUCROSE_cv"</span>]:</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(channel <span class="op">+</span> <span class="st">"_gc"</span>).bounds <span class="op">=</span> <span class="dv">0</span>, <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-apoplast-and-exchanges" class="level2">
+<h2 class="anchored" data-anchor-id="adding-apoplast-and-exchanges">Adding apoplast and exchanges</h2>
+<p>In this section we add an apoplastic compartment and set the influx of osmolites to be from this compartment rather than as boundary reactions.</p>
+<section id="removing-tx_me" class="level3">
+<h3 class="anchored" data-anchor-id="removing-tx_me">Removing tx_me</h3>
+<p>Here we remove all the boundary reactions from the mesophyll cell except for: - Maintenance reactions - Photon influx - Phloem output - Gas transfer (O2 and CO2)</p>
+<div id="cell-118" class="cell" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>tx_me <span class="op">=</span> []</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> model.reactions:</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"_tx_me"</span> <span class="kw">in</span> reaction.<span class="bu">id</span>:</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>        tx_me.append(reaction)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>keep <span class="op">=</span> [</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Photon_tx_me"</span>,</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Phloem_output_tx_me"</span>,</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NADPHox_c_tx_me"</span>,</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NADPHox_m_tx_me"</span>,</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NADPHox_p_tx_me"</span>,</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"O2_tx_me"</span>,</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CO2_tx_me"</span>,</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ATPase_tx_me"</span>,</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> keep:</span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>    tx_me.remove(model.reactions.get_by_id(reaction))</span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>model.remove_reactions(tx_me)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="removing-tx_gc" class="level3">
+<h3 class="anchored" data-anchor-id="removing-tx_gc">Removing tx_gc</h3>
+<p>See above for removing tx_me reactions, only difference is in this case we don’t have a phloem output reaction</p>
+<div id="cell-121" class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>tx_gc <span class="op">=</span> []</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> model.reactions:</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"_tx_gc"</span> <span class="kw">in</span> reaction.<span class="bu">id</span>:</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>        tx_gc.append(reaction)</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>keep <span class="op">=</span> [</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Photon_tx_gc"</span>,</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NADPHox_c_tx_gc"</span>,</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NADPHox_m_tx_gc"</span>,</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NADPHox_p_tx_gc"</span>,</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"O2_tx_gc"</span>,</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CO2_tx_gc"</span>,</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ATPase_tx_gc"</span>,</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> keep:</span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>    tx_gc.remove(model.reactions.get_by_id(reaction))</span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a>model.remove_reactions(tx_gc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-tx-to-apo-and-adding-exchanges" class="level3">
+<h3 class="anchored" data-anchor-id="adding-tx-to-apo-and-adding-exchanges">Adding tx to apo and adding exchanges</h3>
+<p>Now for the species that are present in the extracellular compartment of the guard cell we: - Add the species to the apoplastic compartment with the tag “a” - Add a boundary reaction into this compartment for the species - Add a transfer reaction to allow them to be transferred between the guard cell extracellular compartment and the apoplast - Add a transfer reaction to allow them to be transferred between the mesophyll cell extracellular compartment and the apoplast</p>
+<p>All these actions are free and reversible, as we are assuming that really the extracellular space and the apoplast are all the same. The apoplastic compartment just gives us an easy way to track influx/efflux of metabolites as well as osmolite levels in that compartment.</p>
+<div id="cell-124" class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fructose wasn't in the extracellular compartment of mesophyll before</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"FRU_e_me"</span>, <span class="st">"e"</span>, multi<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="63">
+
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd">
+<td><strong>Metabolite identifier</strong></td>
+<td>FRU_e_me</td>
+</tr>
+<tr class="even">
+<td><strong>Name</strong></td>
+<td>FRU_e_me</td>
+</tr>
+<tr class="odd">
+<td><strong>Memory address</strong></td>
+<td>0x7e0687e36250</td>
+</tr>
+<tr class="even">
+<td><strong>Formula</strong></td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<td><strong>Compartment</strong></td>
+<td>e</td>
+</tr>
+<tr class="even">
+<td><strong>In 0 reaction(s)</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="cell-125" class="cell" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Sucrose_ce_me"</span>, multi<span class="op">=</span><span class="va">False</span>)  <span class="co"># sucrose transport out of the mesophyll cell wasn't allowed before</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>model.reactions.Sucrose_ce_me.add_metabolites({<span class="st">"SUCROSE_c_me"</span>: <span class="op">-</span><span class="dv">1</span>, <span class="st">"SUCROSE_e_me"</span>: <span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-126" class="cell" data-execution_count="65">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>ea_reactions <span class="op">=</span> []</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metabolite <span class="kw">in</span> model.metabolites:</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"_e_gc"</span> <span class="kw">in</span> metabolite.<span class="bu">id</span>:</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>        ea_reactions.append(metabolite)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ea_reactions)</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a><span class="co"># don't want these to be transferred in the apoplast, they already have individual boundary reactions in each cell type</span></span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>remove <span class="op">=</span> [<span class="st">"Photon"</span>, <span class="st">"OXYGEN_MOLECULE"</span>, <span class="st">"CARBON_DIOXIDE"</span>, <span class="st">"PROTON"</span>]</span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> remove:</span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>    ea_reactions.remove(model.metabolites.get_by_id(name <span class="op">+</span> <span class="st">"_e_gc"</span>))</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metabolite <span class="kw">in</span> ea_reactions:</span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>    add_metabolite(model, metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a"</span>, <span class="st">"a"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>    model.metabolites.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a"</span>).charge <span class="op">=</span> metabolite.charge</span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>    model.metabolites.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a"</span>).notes <span class="op">=</span> metabolite.notes</span>
+<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a>    add_reaction(model, metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a_tx"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a_tx"</span>).add_metabolites(</span>
+<span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a>        {metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a"</span>: <span class="dv">1</span>}</span>
+<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb66-23"><a href="#cb66-23" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a_tx"</span>).lower_bound <span class="op">=</span> <span class="op">-</span><span class="dv">1000</span></span>
+<span id="cb66-24"><a href="#cb66-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-25"><a href="#cb66-25" aria-hidden="true" tabindex="-1"></a>    add_reaction(model, metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"ae_gc"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb66-26"><a href="#cb66-26" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"ae_gc"</span>).add_metabolites(</span>
+<span id="cb66-27"><a href="#cb66-27" aria-hidden="true" tabindex="-1"></a>        {metabolite: <span class="dv">1</span>, metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a"</span>: <span class="op">-</span><span class="dv">1</span>}</span>
+<span id="cb66-28"><a href="#cb66-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb66-29"><a href="#cb66-29" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"ae_gc"</span>).lower_bound <span class="op">=</span> <span class="op">-</span><span class="dv">1000</span></span>
+<span id="cb66-30"><a href="#cb66-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-31"><a href="#cb66-31" aria-hidden="true" tabindex="-1"></a>    add_reaction(model, metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"ae_me"</span>, multi<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb66-32"><a href="#cb66-32" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"ae_me"</span>).add_metabolites(</span>
+<span id="cb66-33"><a href="#cb66-33" aria-hidden="true" tabindex="-1"></a>        {metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"e_me"</span>: <span class="dv">1</span>, metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"a"</span>: <span class="op">-</span><span class="dv">1</span>}</span>
+<span id="cb66-34"><a href="#cb66-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb66-35"><a href="#cb66-35" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(metabolite.<span class="bu">id</span>[:<span class="op">-</span><span class="dv">4</span>] <span class="op">+</span> <span class="st">"ae_me"</span>).lower_bound <span class="op">=</span> <span class="op">-</span><span class="dv">1000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[&lt;Metabolite NITRATE_e_gc at 0x7e06872203a0&gt;, &lt;Metabolite SUCROSE_e_gc at 0x7e0687220b20&gt;, &lt;Metabolite WATER_e_gc at 0x7e0687236be0&gt;, &lt;Metabolite MGII_e_gc at 0x7e06871c25e0&gt;, &lt;Metabolite GLC_e_gc at 0x7e06871d5b20&gt;, &lt;Metabolite PROTON_e_gc at 0x7e06871dc8e0&gt;, &lt;Metabolite CARBON_DIOXIDE_e_gc at 0x7e068719acd0&gt;, &lt;Metabolite CAII_e_gc at 0x7e06871bd910&gt;, &lt;Metabolite Pi_e_gc at 0x7e06871bdf10&gt;, &lt;Metabolite SULFATE_e_gc at 0x7e0687154250&gt;, &lt;Metabolite OXYGEN_MOLECULE_e_gc at 0x7e0687154fd0&gt;, &lt;Metabolite Photon_e_gc at 0x7e0687119280&gt;, &lt;Metabolite K_e_gc at 0x7e0687125a00&gt;, &lt;Metabolite AMMONIUM_e_gc at 0x7e06870e0580&gt;, &lt;Metabolite Cl_e_gc at 0x7e06870f8b80&gt;, &lt;Metabolite MAL_e_gc at 0x7e06870f8dc0&gt;, &lt;Metabolite aMAL_e_gc at 0x7e06870f8e80&gt;, &lt;Metabolite FRU_e_gc at 0x7e0687c417f0&gt;]</code></pre>
+</div>
+</div>
+</section>
+<section id="list-of-all-boundary-reactions" class="level3">
+<h3 class="anchored" data-anchor-id="list-of-all-boundary-reactions">List of all boundary reactions:</h3>
+<div id="cell-128" class="cell" data-execution_count="66">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> model.reactions:</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"_tx"</span> <span class="kw">in</span> reaction.<span class="bu">id</span>:</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(reaction.<span class="bu">id</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Photon_tx_me
+Photon_tx_gc
+NADPHox_m_tx_me
+NADPHox_m_tx_gc
+CO2_tx_me
+CO2_tx_gc
+O2_tx_me
+O2_tx_gc
+Phloem_output_tx_me
+NADPHox_c_tx_me
+NADPHox_c_tx_gc
+ATPase_tx_me
+ATPase_tx_gc
+NADPHox_p_tx_me
+NADPHox_p_tx_gc
+NITRATE_a_tx
+SUCROSE_a_tx
+WATER_a_tx
+MGII_a_tx
+GLC_a_tx
+CAII_a_tx
+Pi_a_tx
+SULFATE_a_tx
+K_a_tx
+AMMONIUM_a_tx
+Cl_a_tx
+MAL_a_tx
+aMAL_a_tx
+FRU_a_tx</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="constrain-free-exchange-and-starch-breakdown" class="level2">
+<h2 class="anchored" data-anchor-id="constrain-free-exchange-and-starch-breakdown">Constrain free exchange and starch breakdown</h2>
+<p>Prevent: - Free import into the apoplast of energy-carrying metabolites like Glucose, malate, sucrose, fructose. - Free exchange of protons. - Alpha-glucosidase starch degradation pathway as it isn’t used</p>
+<div id="cell-131" class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> reaction <span class="kw">in</span> [</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GLC_a_tx"</span>,</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MAL_a_tx"</span>,</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SUCROSE_a_tx"</span>,</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FRU_a_tx"</span>,</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RXN_1826_p_me"</span>,</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RXN_1826_p_gc"</span>,</span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MALTODEXGLUCOSID_RXN_p_me"</span>,</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MALTODEXGLUCOSID_RXN_p_gc"</span>,</span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>]:</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(reaction).bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="quadruple-model-into-4-phases" class="level2">
+<h2 class="anchored" data-anchor-id="quadruple-model-into-4-phases">Quadruple model into 4 phases</h2>
+<div id="cell-133" class="cell" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>split_model(model, <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-linker-reactions-with-pseudometabolites-osmolarity-and-charge" class="level2">
+<h2 class="anchored" data-anchor-id="add-linker-reactions-with-pseudometabolites-osmolarity-and-charge">Add Linker Reactions With Pseudometabolites (Osmolarity and Charge)</h2>
+<pre class="{important}"><code>Set phase times here</code></pre>
+<div id="cell-136" class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>compartments <span class="op">=</span> [<span class="st">"c"</span>, <span class="st">"v"</span>, <span class="st">"p"</span>, <span class="st">"a"</span>]</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>cells <span class="op">=</span> [</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gc"</span>,</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"me"</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>phase_times <span class="op">=</span> [<span class="fl">6.0</span>, <span class="fl">0.5</span>, <span class="fl">11.5</span>, <span class="fl">6.0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-137" class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>add_linkers(model, <span class="st">"../inputs/osmolytes.csv"</span>, compartments, cells, phase_times)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-138" class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>prefix_metabolites <span class="op">=</span> {</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a"</span>: {</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"v_gc"</span>: {</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">"MAL"</span>: <span class="fl">0.7</span>,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"CIT"</span>: <span class="fl">0.5</span>,</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"a"</span>: {</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"MAL"</span>: <span class="fl">0.7</span>,</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"v_me"</span>: {</span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"MAL"</span>: <span class="fl">0.7</span>,</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"CIT"</span>: <span class="fl">0.5</span>,</span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"b"</span>: {<span class="st">"v_me"</span>: {<span class="st">"HIS"</span>: <span class="dv">0</span>}, <span class="st">"v_gc"</span>: {<span class="st">"HIS"</span>: <span class="dv">0</span>}},</span>
+<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-139" class="cell" data-execution_count="72">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> prefix, compartments <span class="kw">in</span> prefix_metabolites.items():</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> compartment, metabolites <span class="kw">in</span> compartments.items():</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> metabolite, ratio <span class="kw">in</span> metabolites.items():</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> ratio <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>                set_bounds_multi(</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>                    model, metabolite <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> compartment <span class="op">+</span> <span class="st">"_Linker"</span>, <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">elif</span> ratio <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>                set_bounds_multi(</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>                    prefix <span class="op">+</span> model, metabolite <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> compartment <span class="op">+</span> <span class="st">"_Linker"</span>, <span class="dv">0</span>, <span class="dv">0</span></span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>                add_metabolite(</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>                    model, metabolite <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> compartment <span class="op">+</span> <span class="st">"_prefixpseudometabolite"</span></span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> phase <span class="kw">in</span> <span class="bu">range</span>(check_number_of_models(model)):</span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>                    model.reactions.get_by_id(</span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>                        <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>compartment<span class="sc">}</span><span class="ss">_Linker_"</span> <span class="op">+</span> <span class="bu">str</span>(phase <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a>                    ).add_metabolites(</span>
+<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a>                        {</span>
+<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a>                            model.metabolites.get_by_id(</span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a>                                <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>compartment<span class="sc">}</span><span class="ss">_prefixpseudometabolite_"</span> <span class="op">+</span></span>
+<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a>                                <span class="bu">str</span>(phase <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a>                            ): <span class="dv">1</span> <span class="op">-</span></span>
+<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a>                            ratio</span>
+<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a>                        }</span>
+<span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a>                    model.reactions.get_by_id(</span>
+<span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a>                        <span class="ss">f"</span><span class="sc">{</span>prefix<span class="sc">}{</span>metabolite<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>compartment<span class="sc">}</span><span class="ss">_Linker_"</span> <span class="op">+</span> <span class="bu">str</span>(phase <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a>                    ).add_metabolites(</span>
+<span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a>                        {</span>
+<span id="cb76-32"><a href="#cb76-32" aria-hidden="true" tabindex="-1"></a>                            model.metabolites.get_by_id(</span>
+<span id="cb76-33"><a href="#cb76-33" aria-hidden="true" tabindex="-1"></a>                                <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>compartment<span class="sc">}</span><span class="ss">_prefixpseudometabolite_"</span></span>
+<span id="cb76-34"><a href="#cb76-34" aria-hidden="true" tabindex="-1"></a>                                <span class="op">+</span> <span class="bu">str</span>(phase <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb76-35"><a href="#cb76-35" aria-hidden="true" tabindex="-1"></a>                            ): <span class="op">-</span>ratio</span>
+<span id="cb76-36"><a href="#cb76-36" aria-hidden="true" tabindex="-1"></a>                        }</span>
+<span id="cb76-37"><a href="#cb76-37" aria-hidden="true" tabindex="-1"></a>                    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-maintenance-reactions" class="level2">
+<h2 class="anchored" data-anchor-id="add-maintenance-reactions">Add Maintenance Reactions</h2>
+<p>Remove maintenance phase constraint (no forcing same maintenance for each phase)</p>
+<div id="cell-142" class="cell" data-execution_count="73">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>number_of_models <span class="op">=</span> check_number_of_models(model)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cell <span class="kw">in</span> [<span class="st">"gc"</span>, <span class="st">"me"</span>]:</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>    add_metabolite(model, <span class="st">"maintenance_ratio_constraint_"</span> <span class="op">+</span> cell, <span class="st">"pseudo"</span>)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#add_metabolite(model, "maintenance_phase_constraint_" + cell, "pseudo")</span></span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>    add_reaction(model, <span class="st">"maintenance_phase_overall_"</span> <span class="op">+</span> cell, multi<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, number_of_models <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">"c"</span>, <span class="st">"m"</span>, <span class="st">"p"</span>]:</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>            reaction <span class="op">=</span> model.reactions.get_by_id(<span class="ss">f"NADPHox_</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">_tx_</span><span class="sc">{</span>cell<span class="sc">}</span><span class="ss">_"</span> <span class="op">+</span> <span class="bu">str</span>(i))</span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>            reaction.add_metabolites(</span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>                {<span class="ss">f"maintenance_ratio_constraint_</span><span class="sc">{</span>cell<span class="sc">}</span><span class="ss">_"</span> <span class="op">+</span> <span class="bu">str</span>(i): <span class="op">-</span><span class="dv">3</span>}</span>
+<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>        reaction <span class="op">=</span> model.reactions.get_by_id(<span class="ss">f"ATPase_tx_</span><span class="sc">{</span>cell<span class="sc">}</span><span class="ss">_"</span> <span class="op">+</span> <span class="bu">str</span>(i))</span>
+<span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a>        reaction.add_metabolites(</span>
+<span id="cb77-14"><a href="#cb77-14" aria-hidden="true" tabindex="-1"></a>            {</span>
+<span id="cb77-15"><a href="#cb77-15" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"maintenance_ratio_constraint_</span><span class="sc">{</span>cell<span class="sc">}</span><span class="ss">_"</span> <span class="op">+</span> <span class="bu">str</span>(i): <span class="dv">1</span>,</span>
+<span id="cb77-16"><a href="#cb77-16" aria-hidden="true" tabindex="-1"></a>                <span class="co">#f"maintenance_phase_constraint_{cell}_" + str(i): 1,</span></span>
+<span id="cb77-17"><a href="#cb77-17" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb77-18"><a href="#cb77-18" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb77-19"><a href="#cb77-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">#model.reactions.get_by_id(f"maintenance_phase_overall_{cell}").add_metabolites(</span></span>
+<span id="cb77-20"><a href="#cb77-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">#    {f"maintenance_phase_constraint_{cell}_" + str(i): -1}</span></span>
+<span id="cb77-21"><a href="#cb77-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">#)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-phloem_tx-overall" class="level2">
+<h2 class="anchored" data-anchor-id="add-phloem_tx-overall">Add Phloem_tx Overall</h2>
+<div id="cell-144" class="cell" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>number_of_models <span class="op">=</span> check_number_of_models(model)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>day <span class="op">=</span> [<span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>night <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">4</span>]</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"pseudoPhloem_me"</span>, <span class="st">"pseudo"</span>)</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"pseudoPhloem_day_me"</span>, <span class="st">"pseudo"</span>, multi<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>add_metabolite(model, <span class="st">"pseudoPhloem_night_me"</span>, <span class="st">"pseudo"</span>, multi<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Phloem_constraint_day"</span>, multi<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Phloem_constraint_night"</span>, multi<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>add_reaction(model, <span class="st">"Phloem_tx_overall"</span>, multi<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, number_of_models <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>    length_of_phase <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">-</span>model.reactions.get_by_id(<span class="ss">f"SUCROSE_v_gc_Linker_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>).get_coefficient(</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"SUCROSE_v_gc_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>    model.reactions.get_by_id(<span class="ss">f"Phloem_output_tx_me_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>).add_metabolites(</span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>        {<span class="ss">f"pseudoPhloem_me_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>: <span class="dv">1</span>}</span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="kw">in</span> day:</span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>        model.reactions.get_by_id(<span class="ss">f"Phloem_output_tx_me_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>).add_metabolites(</span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"pseudoPhloem_day_me"</span>: <span class="dv">1</span> <span class="op">*</span> length_of_phase}</span>
+<span id="cb78-22"><a href="#cb78-22" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb78-23"><a href="#cb78-23" aria-hidden="true" tabindex="-1"></a>        model.reactions.Phloem_constraint_day.add_metabolites(</span>
+<span id="cb78-24"><a href="#cb78-24" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"pseudoPhloem_me_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>: <span class="op">-</span><span class="dv">1</span>}</span>
+<span id="cb78-25"><a href="#cb78-25" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb78-26"><a href="#cb78-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> i <span class="kw">in</span> night:</span>
+<span id="cb78-27"><a href="#cb78-27" aria-hidden="true" tabindex="-1"></a>        model.reactions.get_by_id(<span class="ss">f"Phloem_output_tx_me_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>).add_metabolites(</span>
+<span id="cb78-28"><a href="#cb78-28" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"pseudoPhloem_night_me"</span>: <span class="dv">1</span> <span class="op">*</span> length_of_phase}</span>
+<span id="cb78-29"><a href="#cb78-29" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb78-30"><a href="#cb78-30" aria-hidden="true" tabindex="-1"></a>        model.reactions.Phloem_constraint_night.add_metabolites(</span>
+<span id="cb78-31"><a href="#cb78-31" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"pseudoPhloem_me_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>: <span class="op">-</span><span class="dv">1</span>}</span>
+<span id="cb78-32"><a href="#cb78-32" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb78-33"><a href="#cb78-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb78-34"><a href="#cb78-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Make sure all phases are either assigned to day or night"</span>)</span>
+<span id="cb78-35"><a href="#cb78-35" aria-hidden="true" tabindex="-1"></a>model.reactions.Phloem_constraint_day.add_metabolites({})</span>
+<span id="cb78-36"><a href="#cb78-36" aria-hidden="true" tabindex="-1"></a>model.reactions.Phloem_tx_overall.add_metabolites(</span>
+<span id="cb78-37"><a href="#cb78-37" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb78-38"><a href="#cb78-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pseudoPhloem_day_me"</span>: <span class="op">-</span><span class="dv">3</span>,</span>
+<span id="cb78-39"><a href="#cb78-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pseudoPhloem_night_me"</span>: <span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb78-40"><a href="#cb78-40" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb78-41"><a href="#cb78-41" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-pseudoreactions-for-total-metabolite-counting-and-fva" class="level2">
+<h2 class="anchored" data-anchor-id="add-pseudoreactions-for-total-metabolite-counting-and-fva">Add pseudoreactions for total metabolite counting and FVA</h2>
+<p>Essentially, here we add a ‘total’ pseudometabolite in the guard cel for each of a list of metabolites. We can use this metabolite to see the sum of the linker reactions for the vacuole and cytoplasm, but most importantly we can perform FVA on this reaction to see if the total transfer of a metabolite matters. Otherwise, we end up in a situation where we can do FVA on the cytoplasmic and vacuolar reactions separately but it could be the case that when cytoplasm goes down the vacuole compensates etc.</p>
+<pre class="{important}"><code>"total" added as keyword to getweightings in order to prevent these reactions from contributing to sum of fluxes constraint</code></pre>
+<div id="cell-148" class="cell" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>metabolites <span class="op">=</span> [<span class="st">"SUCROSE"</span>, <span class="st">"GLC"</span>, <span class="st">"MAL"</span>, <span class="st">"FRU"</span>, <span class="st">"K"</span>, <span class="st">"Cl"</span>, <span class="st">"CIT"</span>]  <span class="co"># "NITRATE", "CIT"]</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metabolite <span class="kw">in</span> metabolites:</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> metabolite <span class="op">==</span> <span class="st">"MAL"</span> <span class="kw">or</span> metabolite <span class="op">==</span> <span class="st">"CIT"</span>:</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>        add_reaction(model, <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudolinker"</span>)</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>        add_metabolite(model, <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>)</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudolinker"</span>,</span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="op">-</span><span class="dv">1</span>},</span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_c_gc_Linker"</span>,</span>
+<span id="cb80-16"><a href="#cb80-16" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="dv">1</span>},</span>
+<span id="cb80-17"><a href="#cb80-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb80-18"><a href="#cb80-18" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-19"><a href="#cb80-19" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-20"><a href="#cb80-20" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_v_gc_Linker"</span>,</span>
+<span id="cb80-21"><a href="#cb80-21" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="dv">1</span>},</span>
+<span id="cb80-22"><a href="#cb80-22" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb80-23"><a href="#cb80-23" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-24"><a href="#cb80-24" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-25"><a href="#cb80-25" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"a</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_v_gc_Linker"</span>,</span>
+<span id="cb80-26"><a href="#cb80-26" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="dv">1</span>},</span>
+<span id="cb80-27"><a href="#cb80-27" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb80-28"><a href="#cb80-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb80-29"><a href="#cb80-29" aria-hidden="true" tabindex="-1"></a>        add_reaction(model, <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudolinker"</span>)</span>
+<span id="cb80-30"><a href="#cb80-30" aria-hidden="true" tabindex="-1"></a>        add_metabolite(model, <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>)</span>
+<span id="cb80-31"><a href="#cb80-31" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-32"><a href="#cb80-32" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-33"><a href="#cb80-33" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudolinker"</span>,</span>
+<span id="cb80-34"><a href="#cb80-34" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="op">-</span><span class="dv">1</span>},</span>
+<span id="cb80-35"><a href="#cb80-35" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb80-36"><a href="#cb80-36" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-37"><a href="#cb80-37" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-38"><a href="#cb80-38" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_c_gc_Linker"</span>,</span>
+<span id="cb80-39"><a href="#cb80-39" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="dv">1</span>},</span>
+<span id="cb80-40"><a href="#cb80-40" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb80-41"><a href="#cb80-41" aria-hidden="true" tabindex="-1"></a>        add_metabolites_to_reaction_multi(</span>
+<span id="cb80-42"><a href="#cb80-42" aria-hidden="true" tabindex="-1"></a>            model,</span>
+<span id="cb80-43"><a href="#cb80-43" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_v_gc_Linker"</span>,</span>
+<span id="cb80-44"><a href="#cb80-44" aria-hidden="true" tabindex="-1"></a>            {<span class="ss">f"</span><span class="sc">{</span>metabolite<span class="sc">}</span><span class="ss">_total_pseudometabolite"</span>: <span class="dv">1</span>},</span>
+<span id="cb80-45"><a href="#cb80-45" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="export-model" class="level2">
+<h2 class="anchored" data-anchor-id="export-model">Export Model</h2>
+<div id="cell-150" class="cell" data-execution_count="76">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>cobra.io.write_sbml_model(model, <span class="st">"../models/4_stage_GC.xml"</span>)</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>cobra.io.save_json_model(model, <span class="st">"../models/4_stage_GC.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/noahsprent\.github\.io\/mmon-gcm");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./1.0_generating_linkers.html" class="pagination-link" aria-label="Generating table for linkers/osmolytes">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Generating table for linkers/osmolytes</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./1.2_defining_parameters.html" class="pagination-link" aria-label="Finding parameters">
+        <span class="nav-page-text">Finding parameters</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/noahsprent/mmon-gcm/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
